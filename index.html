@@ -1,0 +1,900 @@
+<!doctype html><html lang="ca"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Preu i valor de les 7 Magnífiques</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap">
+<style>
+:root{
+  --ground:#EFF3F1; --surface:#FFFFFF; --surface2:#F6F9F7; --surface3:#E8EEEB;
+  --ink:#0F1C1E; --ink2:#3F5459; --ink3:#6C8087;
+  --rule:#DAE3E0; --rule2:#BFCCC8;
+  --accent:#0B5D63; --accentInk:#07444A; --accentSoft:#D5E7E6; --accentFaint:#EAF3F2;
+  --price:#B06424; --priceSoft:#F2E1D0;
+  --good:#2C7A57; --warn:#8E6A18; --bad:#9C352E;
+  --goodSoft:#DDEDE4; --warnSoft:#F1E8D0; --badSoft:#F3DEDA;
+  --shadow:0 1px 2px rgba(15,28,30,.05), 0 10px 30px -22px rgba(15,28,30,.55);
+  --railw:272px;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0B1214; --surface:#121D1F; --surface2:#172427; --surface3:#1E2D30;
+    --ink:#E3ECEA; --ink2:#A3B7B6; --ink3:#778C8D;
+    --rule:#21302E; --rule2:#2D403E;
+    --accent:#4FB3AE; --accentInk:#84D2CC; --accentSoft:#123330; --accentFaint:#0F2726;
+    --price:#DA9352; --priceSoft:#33241A;
+    --good:#5CBB8D; --warn:#CFA84C; --bad:#DC7A6E;
+    --goodSoft:#112A20; --warnSoft:#2C2616; --badSoft:#2E1B18;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -22px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0B1214; --surface:#121D1F; --surface2:#172427; --surface3:#1E2D30;
+  --ink:#E3ECEA; --ink2:#A3B7B6; --ink3:#778C8D;
+  --rule:#21302E; --rule2:#2D403E;
+  --accent:#4FB3AE; --accentInk:#84D2CC; --accentSoft:#123330; --accentFaint:#0F2726;
+  --price:#DA9352; --priceSoft:#33241A;
+  --good:#5CBB8D; --warn:#CFA84C; --bad:#DC7A6E;
+  --goodSoft:#112A20; --warnSoft:#2C2616; --badSoft:#2E1B18;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -22px rgba(0,0,0,.9);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:Newsreader,Georgia,"Times New Roman",serif;font-weight:600;text-wrap:balance;margin:0}
+.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+.eyebrow{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink3);font-weight:500}
+.app{display:grid;grid-template-columns:var(--railw) 1fr;min-height:100vh}
+.rail{background:var(--surface);border-right:1px solid var(--rule);position:sticky;top:0;height:100vh;
+  overflow-y:auto;display:flex;flex-direction:column;gap:22px;padding:22px 18px 28px}
+.brand{display:flex;flex-direction:column;gap:6px}
+.brand h1{font-size:23px;line-height:1.12;letter-spacing:-.01em}
+.brand .sub{font-size:12px;color:var(--ink3);line-height:1.4}
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{all:unset;cursor:pointer;display:flex;align-items:baseline;gap:10px;padding:8px 10px;
+  border-radius:7px;color:var(--ink2);font-size:14px;font-weight:500}
+.nav button .k{font-family:"IBM Plex Mono",monospace;font-size:10.5px;color:var(--ink3)}
+.nav button:hover{background:var(--surface2);color:var(--ink)}
+.nav button[aria-current="true"]{background:var(--accentFaint);color:var(--accentInk);font-weight:600}
+.nav button[aria-current="true"] .k{color:var(--accent)}
+.nav button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.slicer{display:flex;flex-direction:column;gap:9px}
+.chips{display:flex;flex-wrap:wrap;gap:5px}
+.chip{all:unset;cursor:pointer;font-family:"IBM Plex Mono",monospace;font-size:11px;font-weight:500;
+  padding:4px 8px;border-radius:5px;border:1px solid var(--rule);color:var(--ink2);background:var(--surface2)}
+.chip:hover{border-color:var(--rule2);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .chip[aria-pressed="true"]{color:#08201F}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .chip[aria-pressed="true"]{color:#08201F}}
+.chip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.lever{display:flex;flex-direction:column;gap:5px}
+.lever[hidden]{display:none}
+.lever .lab{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;color:var(--ink2)}
+.lever .val{font-family:"IBM Plex Mono",monospace;font-size:12px;font-weight:600;color:var(--accentInk)}
+input[type=range]{width:100%;accent-color:var(--accent);height:18px}
+input[type=range]:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.seg{display:flex;border:1px solid var(--rule);border-radius:6px;overflow:hidden}
+.seg button{all:unset;cursor:pointer;flex:1;text-align:center;padding:5px 4px;font-size:11.5px;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:var(--accentFaint);color:var(--accentInk);font-weight:600}
+.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+.reset{all:unset;cursor:pointer;font-size:12px;color:var(--ink3);text-decoration:underline;text-underline-offset:3px;align-self:flex-start}
+.reset:hover{color:var(--accent)}
+.reset:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.railfoot{margin-top:auto;font-size:11px;color:var(--ink3);line-height:1.45;border-top:1px solid var(--rule);padding-top:14px}
+.main{padding:26px 30px 60px;min-width:0}
+.viewhead{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:14px;margin-bottom:18px}
+.viewhead h2{font-size:27px;letter-spacing:-.015em;line-height:1.1}
+.viewhead p{margin:5px 0 0;color:var(--ink2);font-size:13.5px;max-width:66ch}
+.scenariotag{font-family:"IBM Plex Mono",monospace;font-size:11px;color:var(--ink2);background:var(--surface);
+  border:1px solid var(--rule);border-radius:7px;padding:7px 11px;white-space:nowrap}
+.scenariotag b{color:var(--accentInk);font-weight:600}
+.scenariotag .basetag{color:var(--good)}
+.grid{display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:11px;padding:16px 18px 18px;box-shadow:var(--shadow);min-width:0}
+.card > header{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:12px}
+.card h3{font-size:16.5px;letter-spacing:-.005em}
+.card .note{font-size:12.5px;color:var(--ink2);margin:12px 0 0;line-height:1.5}
+.card .note b{color:var(--ink);font-weight:600}
+.wide{grid-column:1/-1}
+.scroll{overflow-x:auto}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px}
+.kpi{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:13px 15px;box-shadow:var(--shadow)}
+.kpi .v{font-family:"IBM Plex Mono",monospace;font-size:25px;font-weight:600;letter-spacing:-.02em;line-height:1.15;font-variant-numeric:tabular-nums}
+.kpi .l{font-size:12px;color:var(--ink2);margin-top:3px;line-height:1.35}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.p-good{background:var(--goodSoft);color:var(--good)}
+.p-warn{background:var(--warnSoft);color:var(--warn)}
+.p-bad{background:var(--badSoft);color:var(--bad)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th,td{text-align:right;padding:7px 9px;border-bottom:1px solid var(--rule);white-space:nowrap}
+th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);font-weight:500;border-bottom:1px solid var(--rule2)}
+td:first-child,th:first-child{text-align:left}
+td.n{font-variant-numeric:tabular-nums;font-family:"IBM Plex Mono",monospace;font-size:12.5px}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--surface2)}
+tbody tr.on{background:var(--accentFaint)}
+tbody tr.on td:first-child{box-shadow:inset 3px 0 0 var(--accent)}
+th.sortable{cursor:pointer}
+th.sortable:hover{color:var(--accent)}
+td .nm{font-weight:600}
+.chart{width:100%;display:block;overflow:visible}
+.chart text{font-family:"IBM Plex Mono",monospace;font-size:10.5px;fill:var(--ink3)}
+.chart .lbl{font-family:"IBM Plex Sans",sans-serif;font-size:12px;fill:var(--ink2)}
+.chart .lbl.on{fill:var(--ink);font-weight:600}
+.chart .val{font-size:11px;fill:var(--ink2);font-weight:500}
+.chart .val.on{fill:var(--ink)}
+.chart .grid{stroke:var(--rule);stroke-width:1}
+.chart .axis{stroke:var(--rule2);stroke-width:1}
+.bar{transition:opacity .15s}
+.hit{cursor:pointer}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:10px;font-size:11.5px;color:var(--ink2)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.tt{position:fixed;pointer-events:none;z-index:50;background:var(--ink);color:var(--ground);
+  font-family:"IBM Plex Mono",monospace;font-size:11.5px;padding:6px 9px;border-radius:6px;opacity:0;transition:opacity .12s;max-width:250px;line-height:1.45}
+.tt.on{opacity:1}
+.callout{border-left:3px solid var(--accent);background:var(--accentFaint);padding:11px 14px;border-radius:0 8px 8px 0;font-size:13px;color:var(--ink2);line-height:1.55}
+.callout b{color:var(--ink)}
+.warnout{border-left-color:var(--warn);background:var(--warnSoft)}
+dl.facts{display:grid;grid-template-columns:1fr auto;gap:6px 14px;margin:0;font-size:13px}
+dl.facts dt{color:var(--ink2)}
+dl.facts dd{margin:0;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums;font-weight:500;text-align:right}
+.hr{height:1px;background:var(--rule);margin:14px 0}
+@media (max-width:1020px){
+  .app{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+  .nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:2px}
+  .nav button{white-space:nowrap}
+  .main{padding:20px 16px 50px}
+  .viewhead h2{font-size:23px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head><body>
+<div class="app">
+  <aside class="rail">
+    <div class="brand">
+      <span class="eyebrow">TFM · Anàlisi de les 7 Magnífiques</span>
+      <h1>Preu i valor de les 7 Magnífiques</h1>
+      <span class="sub">Model de valoració · dades a 11 de juny de 2026 · imports en dòlars</span>
+    </div>
+    <nav class="nav" id="nav" aria-label="Vistes del panell"></nav>
+    <div class="slicer">
+      <span class="eyebrow">Companyia</span>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div class="slicer">
+      <span class="eyebrow">Escenari del DCF</span>
+      <div class="lever">
+        <div class="lab"><label for="r">Taxa de descompte</label><span class="val" id="rv">8,50 %</span></div>
+        <input type="range" id="r" min="6" max="12" step="0.25" value="8.5">
+      </div>
+      <div class="lever">
+        <div class="lab"><label for="gp">Creixement perpetu</label><span class="val" id="gpv">2,50 %</span></div>
+        <input type="range" id="gp" min="1" max="4" step="0.25" value="2.5">
+      </div>
+      <div class="lever">
+        <div class="lab"><span>Creixement dels anys 1–10</span></div>
+        <div class="seg" role="group" aria-label="Origen del creixement explícit">
+          <button id="gm-model" aria-pressed="true">Del model</button>
+          <button id="gm-unif" aria-pressed="false">Uniforme</button>
+        </div>
+      </div>
+      <div class="lever" id="guwrap" hidden>
+        <div class="lab"><label for="gu">g uniforme</label><span class="val" id="guv">6,00 %</span></div>
+        <input type="range" id="gu" min="0" max="18" step="0.5" value="6">
+      </div>
+      <div class="lever">
+        <div class="lab"><label for="w">Pes del DCF al valor integrat</label><span class="val" id="wv">50 %</span></div>
+        <input type="range" id="w" min="0" max="100" step="5" value="50">
+      </div>
+      <button class="reset" id="reset">Tornar a l'escenari base del treball</button>
+    </div>
+    <div class="railfoot">
+      Cada xifra prové del llibre <span class="mono">Model_valoracio_7M.xlsx</span>.
+      Els controls recalculen el DCF amb la mateixa fórmula del full <span class="mono">09_DCF</span>;
+      la referència sectorial es manté constant, com al treball.
+    </div>
+  </aside>
+  <main class="main">
+    <div class="viewhead">
+      <div>
+        <span class="eyebrow" id="vkicker"></span>
+        <h2 id="vtitle"></h2>
+        <p id="vlede"></p>
+      </div>
+      <div class="scenariotag" id="stag"></div>
+    </div>
+    <div id="view"></div>
+  </main>
+</div>
+<div class="tt" id="tt" role="status" aria-live="polite"></div>
+<script>
+const D=
+{"comp": {"Microsoft": {"ticker": "MSFT", "year": 2025, "ind": {"Últim exercici": 2025, "Ingressos": 281724, "EBITDA": 156528, "EBIT": 128528, "NOPAT": 104108, "Benefici net": 101832, "FCF apalancat": 61070.38, "Accions (M)": 7465, "FCF per acció ($)": 8.1808948425988, "BPA ($)": 13.641259209645, "TCAA ingressos": 0.137815338542547, "TCAA FCF total": 0.102483910705324, "TCAA FCF/acció": 0.107726213798113, "TCAA BPA": 0.140820979591288, "Marge EBIT": 0.456219562408599, "Marge FCF": 0.216773792790107, "ROIC": 0.244717585638697, "ROE": 0.296472273414095, "Ràtio corrent": 1.35344644450424, "Deute net (mercat)": 81942, "Deute net/EBITDA": 0.523497393437596, "Deute net/FCF": 1.34176338840531, "Preu ($)": 390.34, "Capitalització": 2906081.3, "Valor d’empresa": 2988023.3, "Rendibilitat FCF": 0.0210146839319327, "PER": 28.6146604210857, "EV/EBITDA": 19.0893852856997, "EV/FCF": 48.9275373757294, "PEG": 2.03198845116228}, "dcf": {"FCF apalancat ($/acció)": 8.1808948425988, "TCAA FCF històrica": 0.102483910705324, "g aplicada": 0.102483910705324, "Ajust financer ($/acció)": -10.9768251841929, "VP fluxos 1–10": 89.4215886908053, "VP valor terminal": 163.982931419369, "Valor DCF ($/acció)": 242.43, "Preu ($)": 390.34, "Diferència DCF-preu": -0.378926064456627, "Pes del valor terminal": 0.647119204298618}, "integ": {"Preu ($)": 390.34, "Valor DCF ($)": 242.43, "Valor sector ($)": 513.714293369405, "Valor integrat ($)": 378.07, "Marge de seguretat": -0.0314341343444177, "Decisió": "Mantenir"}, "sint": {"Companyia": "Microsoft", "Preu ($)": 390.34, "Valor integrat ($)": 378.07, "Marge": -0.0314341343444177, "Conclusió": "Millor equilibri entre qualitat, recurrència i preu. Zona de manteniment."}, "obj": {"PER objectiu": 28, "EV/EBITDA objectiu": 20, "EV/FCF objectiu": 28, "Raonament": "Negoci de gran qualitat, creixement estable i marges alts.", "Risc principal": "Pagar de més per un creixement ja descomptat."}, "vps": {"Múltiples propis": 343.461783433802, "Mitjana 7M": 939.819551930436, "Sector tecnològic": 513.714293369405, "Deute net per acció": 10.9768251841929}, "t9": {"Marge EBIT": 0.456219562408599, "Marge FCF": 0.216773792790107, "Rendibilitat del FCF": 0.0210146839319327, "Lectura": "Alta rendibilitat operativa i conversió sòlida en caixa."}, "t10": {"ROIC": 0.244717585638697, "ROE": 0.296472273414095, "Marge EBIT": 0.456219562408599, "TCAA ingressos": 0.137815338542547, "Interpretació": "Rendibilitat sòlida i creixement estable."}, "t11": {"Ràtio corrent": 1.35344644450424, "Deute net/EBITDA": 0.523497393437596, "Deute net/FCF": 1.34176338840531, "Lectura": "Solvència elevada i deute contingut."}, "t12": {"Creixement": "Alt i estable", "Qualitat financera": "Molt alta", "Valoració": "Pròxima a valor raonable", "Risc principal": "Retorn del CAPEX en IA"}, "hist": [{"y": 2021, "rev": 168088, "ebitda": 80816, "ebit": 69916, "ni": 61271, "fcf": 41337.25, "cfo": 76740, "capex": -20622, "sh": 7608, "eps": 8.05349631966351, "eq": 141988, "ta": 333779, "dbt": 82278, "cash": 14224, "cc": 56118}, {"y": 2022, "rev": 198270, "ebitda": 97983, "ebit": 83383, "ni": 72738, "fcf": 49479, "cfo": 89035, "capex": -23886, "sh": 7540, "eps": 9.64694960212202, "eq": 166542, "ta": 364840, "dbt": 78400, "cash": 13931, "cc": 65149}, {"y": 2023, "rev": 211915, "ebitda": 102023, "ebit": 88523, "ni": 72361, "fcf": 47269, "cfo": 87582, "capex": -28107, "sh": 7472, "eps": 9.68428800856531, "eq": 206223, "ta": 411976, "dbt": 79441, "cash": 34704, "cc": 59475}, {"y": 2024, "rev": 245122, "ebitda": 129433, "ebit": 109433, "ni": 88136, "fcf": 56717.25, "cfo": 118548, "capex": -44477, "sh": 7469, "eps": 11.8002409961173, "eq": 268477, "ta": 512163, "dbt": 91159, "cash": 18315, "cc": 74071}, {"y": 2025, "rev": 281724, "ebitda": 156528, "ebit": 128528, "ni": 101832, "fcf": 61070.38, "cfo": 136162, "capex": -64551, "sh": 7465, "eps": 13.641259209645, "eq": 343479, "ta": 619003, "dbt": 112184, "cash": 30242, "cc": 71611}], "mkt": [{"y": 2021, "px": 332.54468980021, "cap": 2530000, "ev": 2598054}, {"y": 2022, "px": 237.400530503979, "cap": 1790000, "ev": 1854469}, {"y": 2023, "px": 338.597430406852, "cap": 2530000, "ev": 2574737}, {"y": 2024, "px": 444.503949658589, "cap": 3320000, "ev": 3392844}, {"y": 2025, "px": 390.34, "cap": 2906081.3, "ev": 2988023.3}]}, "NVIDIA": {"ticker": "NVDA", "year": 2026, "ind": {"Últim exercici": 2026, "Ingressos": 215938, "EBITDA": 133230, "EBIT": 130387, "NOPAT": 110699, "Benefici net": 120067, "FCF apalancat": 58129, "Accions (M)": 24514, "FCF per acció ($)": 2.37125724076038, "BPA ($)": 4.89789508036224, "TCAA ingressos": 0.683013914802827, "TCAA FCF total": 0.73142437788727, "TCAA FCF/acció": 0.746000940976858, "TCAA BPA": 0.888962938734718, "Marge EBIT": 0.603816836314127, "Marge FCF": 0.269193009104465, "ROIC": 0.700183428209994, "ROE": 0.763333396908953, "Ràtio corrent": 3.90526381245531, "Deute net (mercat)": 807, "Deute net/EBITDA": 0.00605719432560234, "Deute net/FCF": 0.0138829155843039, "Preu ($)": 204.87, "Capitalització": 4996984.17, "Valor d’empresa": 4997791.17, "Rendibilitat FCF": 0.0116328165194087, "PER": 41.828172437056, "EV/EBITDA": 37.5125059671245, "EV/FCF": 85.977587262812, "PEG": 0.470527742096774}, "dcf": {"FCF apalancat ($/acció)": 2.37125724076038, "TCAA FCF històrica": 0.73142437788727, "g aplicada": 0.18, "Ajust financer ($/acció)": -0.0329199641021457, "VP fluxos 1–10": 38.7269233056205, "VP valor terminal": 93.7721721692723, "Valor DCF ($/acció)": 132.47, "Preu ($)": 204.87, "Diferència DCF-preu": -0.3533948357495, "Pes del valor terminal": 0.707719338257982}, "integ": {"Preu ($)": 204.87, "Valor DCF ($)": 132.47, "Valor sector ($)": 156.863297503558, "Valor integrat ($)": 144.67, "Marge de seguretat": -0.293844877239225, "Decisió": "Cara / no comprar"}, "sint": {"Companyia": "NVIDIA", "Preu ($)": 204.87, "Valor integrat ($)": 144.67, "Marge": -0.293844877239225, "Conclusió": "Qualitat i creixement extraordinaris, però preu molt sensible al manteniment de les expectatives."}, "obj": {"PER objectiu": 40, "EV/EBITDA objectiu": 30, "EV/FCF objectiu": 40, "Raonament": "Lideratge en IA i semiconductors amb expectatives molt altes.", "Risc principal": "Contracció del múltiple si es desaccelera la IA."}, "vps": {"Múltiples propis": 151.270566479019, "Mitjana 7M": 291.4980062236, "Sector tecnològic": 156.863297503558, "Deute net per acció": 0.0329199641021457}, "t9": {"Marge EBIT": 0.603816836314127, "Marge FCF": 0.269193009104465, "Rendibilitat del FCF": 0.0116328165194087, "Lectura": "Marges excepcionals amb una conversió en caixa molt alta."}, "t10": {"ROIC": 0.700183428209994, "ROE": 0.763333396908953, "Marge EBIT": 0.603816836314127, "TCAA ingressos": 0.683013914802827, "Interpretació": "Rendibilitat extraordinària, difícil de sostenir deu anys."}, "t11": {"Ràtio corrent": 3.90526381245531, "Deute net/EBITDA": 0.00605719432560234, "Deute net/FCF": 0.0138829155843039, "Lectura": "Pràcticament sense deute net."}, "t12": {"Creixement": "Excepcional", "Qualitat financera": "Excel·lent", "Valoració": "Exigent", "Risc principal": "Normalització del cicle"}, "hist": [{"y": 2022, "rev": 26914, "ebitda": 11215, "ebit": 10041, "ni": 9752, "fcf": 6468.13, "cfo": 9108, "capex": -976, "sh": 25350, "eps": 0.384694280078895, "eq": 26612, "ta": 44187, "dbt": 11831, "cash": 1990, "cc": 8132}, {"y": 2023, "rev": 26974, "ebitda": 7121, "ebit": 5577, "ni": 4368, "fcf": 4532.88, "cfo": 5641, "capex": -1833, "sh": 25070, "eps": 0.174232149980056, "eq": 22101, "ta": 41182, "dbt": 12031, "cash": 3389, "cc": 3808}, {"y": 2024, "rev": 60922, "ebitda": 34480, "ebit": 32972, "ni": 29760, "fcf": 19866.88, "cfo": 28090, "capex": -1069, "sh": 24940, "eps": 1.19326383319968, "eq": 42978, "ta": 65728, "dbt": 11056, "cash": 7280, "cc": 27021}, {"y": 2025, "rev": 130497, "ebitda": 83317, "ebit": 81453, "ni": 72880, "fcf": 44457.75, "cfo": 64089, "capex": -3236, "sh": 24804, "eps": 2.93823576842445, "eq": 79327, "ta": 111601, "dbt": 9982, "cash": 8589, "cc": 60853}, {"y": 2026, "rev": 215938, "ebitda": 133230, "ebit": 130387, "ni": 120067, "fcf": 58129, "cfo": 102718, "capex": -6042, "sh": 24514, "eps": 4.89789508036224, "eq": 157293, "ta": 206803, "dbt": 11412, "cash": 10605, "cc": 96676}], "mkt": [{"y": 2022, "px": 17.8428710059172, "cap": 452316.78, "ev": 462157.78}, {"y": 2023, "px": 24.1078579976067, "cap": 604384, "ev": 613026}, {"y": 2024, "px": 44.502067361668, "cap": 1109881.56, "ev": 1113657.56}, {"y": 2025, "px": 103.009317045638, "cap": 2555043.1, "ev": 2556436.1}, {"y": 2026, "px": 204.87, "cap": 4996984.17, "ev": 4997791.17}]}, "Alphabet": {"ticker": "GOOGL", "year": 2025, "ind": {"Últim exercici": 2025, "Ingressos": 402836, "EBITDA": 150175, "EBIT": 129039, "NOPAT": 107386, "Benefici net": 132170, "FCF apalancat": 38088, "Accions (M)": 12230, "FCF per acció ($)": 3.11430907604252, "BPA ($)": 10.807031888798, "TCAA ingressos": 0.118227093009333, "TCAA FCF total": -0.0512499999427444, "TCAA FCF/acció": -0.0265715517702062, "TCAA BPA": 0.178107541765072, "Marge EBIT": 0.3203263859238, "Marge FCF": 0.0945496430309109, "ROIC": 0.237814830152828, "ROE": 0.318278689511517, "Ràtio corrent": 2.00533359287557, "Deute net (mercat)": 36288, "Deute net/EBITDA": 0.241638088896288, "Deute net/FCF": 0.952741020793951, "Preu ($)": 357.77, "Capitalització": 4334741.32, "Valor d’empresa": 4371029.32, "Rendibilitat FCF": 0.00878668349233813, "PER": 33.1052969660286, "EV/EBITDA": 29.1062381887798, "EV/FCF": 114.761324301617, "PEG": 1.85872516334514}, "dcf": {"FCF apalancat ($/acció)": 3.11430907604252, "TCAA FCF històrica": -0.0512499999427444, "g aplicada": 0.02, "Ajust financer ($/acció)": -2.96713000817662, "VP fluxos 1–10": 22.5223803337926, "VP valor terminal": 28.6839305435216, "Valor DCF ($/acció)": 48.24, "Preu ($)": 357.77, "Diferència DCF-preu": -0.865164770662716, "Pes del valor terminal": 0.560163972996333}, "integ": {"Preu ($)": 357.77, "Valor DCF ($)": 48.24, "Valor sector ($)": 348.721071818139, "Valor integrat ($)": 198.48, "Marge de seguretat": -0.445230175811275, "Decisió": "Cara / no comprar"}, "sint": {"Companyia": "Alphabet", "Preu ($)": 357.77, "Valor integrat ($)": 198.48, "Marge": -0.445230175811275, "Conclusió": "Negoci sòlid, però el model penalitza el CAPEX elevat i la menor conversió recent en FCF."}, "obj": {"PER objectiu": 22, "EV/EBITDA objectiu": 16, "EV/FCF objectiu": 22, "Raonament": "Qualitat alta, caixa neta i valoració normalment més moderada.", "Risc principal": "Regulació i pressió en publicitat i cerca."}, "vps": {"Múltiples propis": 167.579067865904, "Mitjana 7M": 569.130766721878, "Sector tecnològic": 348.721071818139, "Deute net per acció": 2.96713000817662}, "t9": {"Marge EBIT": 0.3203263859238, "Marge FCF": 0.0945496430309109, "Rendibilitat del FCF": 0.00878668349233813, "Lectura": "Benefici fort, FCF comprimit pel cicle inversor."}, "t10": {"ROIC": 0.237814830152828, "ROE": 0.318278689511517, "Marge EBIT": 0.3203263859238, "TCAA ingressos": 0.118227093009333, "Interpretació": "Qualitat elevada, tot i el CAPEX actual."}, "t11": {"Ràtio corrent": 2.00533359287557, "Deute net/EBITDA": 0.241638088896288, "Deute net/FCF": 0.952741020793951, "Lectura": "Balanç conservador."}, "t12": {"Creixement": "Alt", "Qualitat financera": "Alta", "Valoració": "Exigent amb FCF deprimit", "Risc principal": "Cerca, regulació i CAPEX"}, "hist": [{"y": 2021, "rev": 257637, "ebitda": 88987, "ebit": 78714, "ni": 76033, "fcf": 47009, "cfo": 91652, "capex": -24640, "sh": 13553, "eps": 5.61004943554933, "eq": 251635, "ta": 359268, "dbt": 28508, "cash": 20945, "cc": 67012}, {"y": 2022, "rev": 282836, "ebitda": 88317, "ebit": 74842, "ni": 59972, "fcf": 49939, "cfo": 91495, "capex": -31485, "sh": 13159, "eps": 4.55748917090964, "eq": 256144, "ta": 365264, "dbt": 29977, "cash": 21879, "cc": 60010}, {"y": 2023, "rev": 307394, "ebitda": 96239, "ebit": 84293, "ni": 73795, "fcf": 56280, "cfo": 101746, "capex": -32251, "sh": 12722, "eps": 5.80058166954881, "eq": 283379, "ta": 402392, "dbt": 29787, "cash": 24048, "cc": 69495}, {"y": 2024, "rev": 350018, "ebitda": 127701, "ebit": 112390, "ni": 100118, "fcf": 53158, "cfo": 125299, "capex": -52535, "sh": 12447, "eps": 8.04354462922793, "eq": 325084, "ta": 450256, "dbt": 28137, "cash": 23466, "cc": 72764}, {"y": 2025, "rev": 402836, "ebitda": 150175, "ebit": 129039, "ni": 132170, "fcf": 38088, "cfo": 164713, "capex": -91447, "sh": 12230, "eps": 10.807031888798, "eq": 415265, "ta": 595281, "dbt": 66996, "cash": 30708, "cc": 73266}], "mkt": [{"y": 2021, "px": 100.246587471409, "cap": 1358642, "ev": 1366205}, {"y": 2022, "px": 72.841553309522, "cap": 958522, "ev": 966620}, {"y": 2023, "px": 112.279987423361, "cap": 1428426, "ev": 1434165}, {"y": 2024, "px": 136.882943681208, "cap": 1703782, "ev": 1708453}, {"y": 2025, "px": 357.77, "cap": 4334741.32, "ev": 4371029.32}]}, "Apple": {"ticker": "AAPL", "year": 2025, "ind": {"Últim exercici": 2025, "Ingressos": 416161, "EBITDA": 144748, "EBIT": 133050, "NOPAT": 112281, "Benefici net": 112010, "FCF apalancat": 78862, "Accions (M)": 15004.7, "FCF per acció ($)": 5.25581984311582, "BPA ($)": 7.46499430178544, "TCAA ingressos": 0.0327599162757746, "TCAA FCF total": 0.0184702778147685, "TCAA FCF/acció": 0.048667000013644, "TCAA BPA": 0.073838274121071, "Marge EBIT": 0.319707997625919, "Marge FCF": 0.189498775714207, "ROIC": 0.789615814679635, "ROE": 1.51912983331751, "Ràtio corrent": 0.893292922218667, "Deute net (mercat)": 68464, "Deute net/EBITDA": 0.472987536960787, "Deute net/FCF": 0.868149425578859, "Preu ($)": 295.63, "Capitalització": 4353409.83499, "Valor d’empresa": 4421873.83499, "Rendibilitat FCF": 0.0181149955986584, "PER": 39.6021735648603, "EV/EBITDA": 30.5487732817725, "EV/FCF": 56.0710333873095, "PEG": 5.36336663285567}, "dcf": {"FCF apalancat ($/acció)": 5.25581984311582, "TCAA FCF històrica": 0.0184702778147685, "g aplicada": 0.02, "Ajust financer ($/acció)": -4.56283697774697, "VP fluxos 1–10": 38.0095779134969, "VP valor terminal": 48.4080313315501, "Valor DCF ($/acció)": 81.85, "Preu ($)": 295.63, "Diferència DCF-preu": -0.723133646788215, "Pes del valor terminal": 0.560163972996333}, "integ": {"Preu ($)": 295.63, "Valor DCF ($)": 81.85, "Valor sector ($)": 256.058753812855, "Valor integrat ($)": 168.95, "Marge de seguretat": -0.42850860873389, "Decisió": "Cara / no comprar"}, "sint": {"Companyia": "Apple", "Preu ($)": 295.63, "Valor integrat ($)": 168.95, "Marge": -0.42850860873389, "Conclusió": "Empresa madura i de gran qualitat, però amb una prima elevada respecte del creixement actual."}, "obj": {"PER objectiu": 25, "EV/EBITDA objectiu": 18, "EV/FCF objectiu": 25, "Raonament": "Qualitat excepcional amb creixement més madur.", "Risc principal": "Creixement baix si no obre línies noves."}, "vps": {"Múltiples propis": 163.887848474145, "Mitjana 7M": 518.569893677618, "Sector tecnològic": 256.058753812855, "Deute net per acció": 4.56283697774697}, "t9": {"Marge EBIT": 0.319707997625919, "Marge FCF": 0.189498775714207, "Rendibilitat del FCF": 0.0181149955986584, "Lectura": "Conversió sòlida i estable."}, "t10": {"ROIC": 0.789615814679635, "ROE": 1.51912983331751, "Marge EBIT": 0.319707997625919, "TCAA ingressos": 0.0327599162757746, "Interpretació": "ROIC i ROE molt elevats pel patrimoni net reduït per les recompres."}, "t11": {"Ràtio corrent": 0.893292922218667, "Deute net/EBITDA": 0.472987536960787, "Deute net/FCF": 0.868149425578859, "Lectura": "Circulant ajustat, deute assumible per la generació de caixa."}, "t12": {"Creixement": "Baix-moderat", "Qualitat financera": "Molt alta", "Valoració": "Molt exigent", "Risc principal": "Maduresa del negoci"}, "hist": [{"y": 2021, "rev": 365817, "ebitda": 120233, "ebit": 108949, "ni": 94680, "fcf": 73295, "cfo": 104038, "capex": -11085, "sh": 16864.92, "eps": 5.61402010801119, "eq": 63090, "ta": 351002, "dbt": 130522, "cash": 34940, "cc": 92953}, {"y": 2022, "rev": 394328, "ebitda": 130541, "ebit": 119437, "ni": 99803, "fcf": 92047, "cfo": 122151, "capex": -10708, "sh": 16325.82, "eps": 6.11319982702247, "eq": 50672, "ta": 352755, "dbt": 122498, "cash": 23646, "cc": 111443}, {"y": 2023, "rev": 383285, "ebitda": 125820, "ebit": 114301, "ni": 96995, "fcf": 84638, "cfo": 110543, "capex": -10959, "sh": 15812.55, "eps": 6.13405175003399, "eq": 62146, "ta": 352583, "dbt": 117945, "cash": 29965, "cc": 99584}, {"y": 2024, "rev": 391035, "ebitda": 134661, "ebit": 123216, "ni": 93736, "fcf": 110846, "cfo": 118254, "capex": -9447, "sh": 15408.1, "eps": 6.08355345564995, "eq": 56950, "ta": 364980, "dbt": 109092, "cash": 29943, "cc": 108807}, {"y": 2025, "rev": 416161, "ebitda": 144748, "ebit": 133050, "ni": 112010, "fcf": 78862, "cfo": 111482, "capex": -12715, "sh": 15004.7, "eps": 7.46499430178544, "eq": 73733, "ta": 359241, "dbt": 104398, "cash": 35934, "cc": 98767}], "mkt": [{"y": 2021, "px": 114.670274154873, "cap": 1933905, "ev": 2029487}, {"y": 2022, "px": 123.372547290121, "cap": 2014158, "ev": 2113010}, {"y": 2023, "px": 145.056489939953, "cap": 2293713, "ev": 2381693}, {"y": 2024, "px": 231.318592169054, "cap": 3564180, "ev": 3643329}, {"y": 2025, "px": 295.63, "cap": 4353409.83499, "ev": 4421873.83499}]}, "Amazon": {"ticker": "AMZN", "year": 2025, "ind": {"Últim exercici": 2025, "Ingressos": 716924, "EBITDA": 145731, "EBIT": 79975, "NOPAT": 67179, "Benefici net": 77670, "FCF apalancat": 23793.13, "Accions (M)": 10827, "FCF per acció ($)": 2.19757365844648, "BPA ($)": 7.1737323358271, "TCAA ingressos": 0.111437235510672, "TCAA FCF total": "N/D", "TCAA FCF/acció": "N/D", "TCAA BPA": 0.219608963800706, "Marge EBIT": 0.111552967957552, "Marge FCF": 0.0331877995436057, "ROIC": 0.133730270112094, "ROE": 0.188948219867904, "Ràtio corrent": 1.05081534827183, "Deute net (mercat)": 91282, "Deute net/EBITDA": 0.626373249342968, "Deute net/FCF": 3.83648557377697, "Preu ($)": 241.51, "Capitalització": 2626179.74, "Valor d’empresa": 2717461.74, "Rendibilitat FCF": 0.0090599777454684, "PER": 33.6658783314021, "EV/EBITDA": 18.647108302283, "EV/FCF": 114.212032632949, "PEG": 1.5329919939859}, "dcf": {"FCF apalancat ($/acció)": 2.19757365844648, "TCAA FCF històrica": "N/D", "g aplicada": 0.02, "Ajust financer ($/acció)": -8.43095963794218, "VP fluxos 1–10": 15.8926389573222, "VP valor terminal": 20.2404606106895, "Valor DCF ($/acció)": 27.7, "Preu ($)": 241.51, "Diferència DCF-preu": -0.885304956316509, "Pes del valor terminal": 0.560163972996333}, "integ": {"Preu ($)": 241.51, "Valor DCF ($)": 27.7, "Valor sector ($)": 303.152006557904, "Valor integrat ($)": 165.43, "Marge de seguretat": -0.315018011676535, "Decisió": "Cara / no comprar"}, "sint": {"Companyia": "Amazon", "Preu ($)": 241.51, "Valor integrat ($)": 165.43, "Marge": -0.315018011676535, "Conclusió": "Negoci diversificat amb potencial de normalització del FCF, però valoració exigent."}, "obj": {"PER objectiu": 35, "EV/EBITDA objectiu": 22, "EV/FCF objectiu": 30, "Raonament": "PER menys net per la reinversió: millor mirar el FCF normalitzat.", "Risc principal": "DCF sensible a l’expansió de marges."}, "vps": {"Múltiples propis": 204.375662695114, "Mitjana 7M": 449.752102230768, "Sector tecnològic": 303.152006557904, "Deute net per acció": 8.43095963794218}, "t9": {"Marge EBIT": 0.111552967957552, "Marge FCF": 0.0331877995436057, "Rendibilitat del FCF": 0.0090599777454684, "Lectura": "Marge agregat reduït pel pes del retail."}, "t10": {"ROIC": 0.133730270112094, "ROE": 0.188948219867904, "Marge EBIT": 0.111552967957552, "TCAA ingressos": 0.111437235510672, "Interpretació": "Rendibilitat més moderada per la intensitat de capital."}, "t11": {"Ràtio corrent": 1.05081534827183, "Deute net/EBITDA": 0.626373249342968, "Deute net/FCF": 3.83648557377697, "Lectura": "Més dependència de la caixa operativa."}, "t12": {"Creixement": "Alt", "Qualitat financera": "Mitjana-alta", "Valoració": "Exigent, necessita normalització", "Risc principal": "Marge i intensitat inversora"}, "hist": [{"y": 2021, "rev": 469822, "ebitda": 59312, "ebit": 24879, "ni": 33364, "fcf": -968.25, "cfo": 66064, "capex": -59611, "sh": 10290, "eps": 3.24237123420797, "eq": 93404, "ta": 420549, "dbt": 138714, "cash": 36220, "cc": 6453}, {"y": 2022, "rev": 513983, "ebitda": 55269, "ebit": 13348, "ni": -2722, "fcf": 695.13, "cfo": 46752, "capex": -58154, "sh": 10180, "eps": -0.267387033398821, "eq": 146043, "ta": 462675, "dbt": 161938, "cash": 53888, "cc": -11402}, {"y": 2023, "rev": 574785, "ebitda": 85515, "ebit": 36852, "ni": 30425, "fcf": 45475.75, "cfo": 101746, "capex": -37601, "sh": 10490, "eps": 2.90038131553861, "eq": 201875, "ta": 527854, "dbt": 161427, "cash": 73387, "cc": 64145}, {"y": 2024, "rev": 637959, "ebitda": 121388, "ebit": 68593, "ni": 59248, "fcf": 45555.88, "cfo": 118254, "capex": -49833, "sh": 10720, "eps": 5.52686567164179, "eq": 285970, "ta": 624894, "dbt": 155250, "cash": 78779, "cc": 68421}, {"y": 2025, "rev": 716924, "ebitda": 145731, "ebit": 79975, "ni": 77670, "fcf": 23793.13, "cfo": 139514, "capex": -94342, "sh": 10827, "eps": 7.1737323358271, "eq": 411065, "ta": 818042, "dbt": 178092, "cash": 86810, "cc": 45172}], "mkt": [{"y": 2021, "px": 170.068027210884, "cap": 1750000, "ev": 1850000}, {"y": 2022, "px": 103.143418467584, "cap": 1050000, "ev": 1150000}, {"y": 2023, "px": 157.292659675882, "cap": 1650000, "ev": 1730000}, {"y": 2024, "px": 181.902985074627, "cap": 1950000, "ev": 2020000}, {"y": 2025, "px": 241.51, "cap": 2626179.74, "ev": 2717461.74}]}, "Meta": {"ticker": "META", "year": 2025, "ind": {"Últim exercici": 2025, "Ingressos": 200966, "EBITDA": 101892, "EBIT": 83276, "NOPAT": 69600, "Benefici net": 60458, "FCF apalancat": 13797, "Accions (M)": 2520, "FCF per acció ($)": 5.475, "BPA ($)": 23.9912698412698, "TCAA ingressos": 0.142550732672868, "TCAA FCF total": -0.228742316492417, "TCAA FCF/acció": -0.224944773414756, "TCAA BPA": 0.118678357287412, "Marge EBIT": 0.414378551595792, "Marge FCF": 0.0686534040583979, "ROIC": 0.2802315936964, "ROE": 0.278296653977343, "Ràtio corrent": 2.59876661248685, "Deute net (mercat)": 31123, "Deute net/EBITDA": 0.305450869548149, "Deute net/FCF": 2.25578024208161, "Preu ($)": 568.43, "Capitalització": 1457454.52, "Valor d’empresa": 1488577.52, "Rendibilitat FCF": 0.00946650465635113, "PER": 23.6932018922227, "EV/EBITDA": 14.6093659953676, "EV/FCF": 107.891390882076, "PEG": 1.99642145659661}, "dcf": {"FCF apalancat ($/acció)": 5.475, "TCAA FCF històrica": -0.228742316492417, "g aplicada": 0.02, "Ajust financer ($/acció)": -12.3503968253968, "VP fluxos 1–10": 39.5946674901675, "VP valor terminal": 50.4267610860718, "Valor DCF ($/acció)": 77.67, "Preu ($)": 568.43, "Diferència DCF-preu": -0.863360484140527, "Pes del valor terminal": 0.560163972996333}, "integ": {"Preu ($)": 568.43, "Valor DCF ($)": 77.67, "Valor sector ($)": 957.128789683214, "Valor integrat ($)": 517.4, "Marge de seguretat": -0.0897735868972432, "Decisió": "Mantenir"}, "sint": {"Companyia": "Meta", "Preu ($)": 568.43, "Valor integrat ($)": 517.4, "Marge": -0.0897735868972432, "Conclusió": "Valoració relativament equilibrada, però condicionada pel CAPEX i Reality Labs."}, "obj": {"PER objectiu": 22, "EV/EBITDA objectiu": 14, "EV/FCF objectiu": 22, "Raonament": "Bon FCF, recompres i valoració històricament raonable.", "Risc principal": "Regulació i despesa alta en IA."}, "vps": {"Múltiples propis": 404.774867724868, "Mitjana 7M": 1385.63944333667, "Sector tecnològic": 957.128789683214, "Deute net per acció": 12.3503968253968}, "t9": {"Marge EBIT": 0.414378551595792, "Marge FCF": 0.0686534040583979, "Rendibilitat del FCF": 0.00946650465635113, "Lectura": "Marge operatiu alt, FCF condicionat per la inversió."}, "t10": {"ROIC": 0.2802315936964, "ROE": 0.278296653977343, "Marge EBIT": 0.414378551595792, "TCAA ingressos": 0.142550732672868, "Interpretació": "Alta rendibilitat però FCF condicionat per la inversió."}, "t11": {"Ràtio corrent": 2.59876661248685, "Deute net/EBITDA": 0.305450869548149, "Deute net/FCF": 2.25578024208161, "Lectura": "Liquiditat còmoda."}, "t12": {"Creixement": "Alt", "Qualitat financera": "Alta", "Valoració": "Relativament raonable", "Risc principal": "Disciplina de capital i regulació"}, "hist": [{"y": 2021, "rev": 117929, "ebitda": 54720, "ebit": 46753, "ni": 39370, "fcf": 38993, "cfo": 57683, "capex": -18690, "sh": 2570, "eps": 15.3190661478599, "eq": 124879, "ta": 165987, "dbt": 13871, "cash": 16601, "cc": 38993}, {"y": 2022, "rev": 116609, "ebitda": 42241, "ebit": 33555, "ni": 23200, "fcf": 28121, "cfo": 50475, "capex": -22354, "sh": 2570, "eps": 9.0272373540856, "eq": 125713, "ta": 185727, "dbt": 29977, "cash": 14681, "cc": 28121}, {"y": 2023, "rev": 134902, "ebitda": 57929, "ebit": 46751, "ni": 39098, "fcf": 46618, "cfo": 71113, "capex": -24495, "sh": 2530, "eps": 15.4537549407115, "eq": 153168, "ta": 229623, "dbt": 29787, "cash": 41862, "cc": 46618}, {"y": 2024, "rev": 164501, "ebitda": 84820, "ebit": 69380, "ni": 62360, "fcf": 44178, "cfo": 91328, "capex": -47150, "sh": 2530, "eps": 24.6482213438735, "eq": 182637, "ta": 276054, "dbt": 28137, "cash": 43889, "cc": 44178}, {"y": 2025, "rev": 200966, "ebitda": 101892, "ebit": 83276, "ni": 60458, "fcf": 13797, "cfo": 115800, "capex": -102003, "sh": 2520, "eps": 23.9912698412698, "eq": 217243, "ta": 366021, "dbt": 66996, "cash": 35873, "cc": 13797}], "mkt": [{"y": 2021, "px": 474.708171206226, "cap": 1220000, "ev": 1215000}, {"y": 2022, "px": 408.560311284047, "cap": 1050000, "ev": 1065000}, {"y": 2023, "px": 573.122529644269, "cap": 1450000, "ev": 1438000}, {"y": 2024, "px": 731.225296442688, "cap": 1850000, "ev": 1834000}, {"y": 2025, "px": 568.43, "cap": 1457454.52, "ev": 1488577.52}]}, "Tesla": {"ticker": "TSLA", "year": 2025, "ind": {"Últim exercici": 2025, "Ingressos": 94827, "EBITDA": 10503, "EBIT": 4355, "NOPAT": 3440, "Benefici net": 3794, "FCF apalancat": 6220, "Accions (M)": 3520, "FCF per acció ($)": 1.76704545454545, "BPA ($)": 1.07784090909091, "TCAA ingressos": 0.152102257393544, "TCAA FCF total": 0.0553095342980174, "TCAA FCF/acció": 0.0446561636823848, "TCAA BPA": -0.0986307413075273, "Marge EBIT": 0.0459257384500195, "Marge FCF": 0.065593132757548, "ROIC": 0.0460336152446205, "ROE": 0.0457853134616545, "Ràtio corrent": 2.16440688654853, "Deute net (mercat)": -8136.69999999995, "Deute net/EBITDA": -0.774702465962102, "Deute net/FCF": -1.30815112540192, "Preu ($)": 399.15, "Capitalització": 1412192.7, "Valor d’empresa": 1404056, "Rendibilitat FCF": 0.00440449805469183, "PER": 370.323668950975, "EV/EBITDA": 133.681424354946, "EV/FCF": 225.732475884244, "PEG": "N/D"}, "dcf": {"FCF apalancat ($/acció)": 1.76704545454545, "TCAA FCF històrica": 0.0553095342980174, "g aplicada": 0.0553095342980174, "Ajust financer ($/acció)": 2.31156249999999, "VP fluxos 1–10": 15.2177917821577, "VP valor terminal": 22.8729179836307, "Valor DCF ($/acció)": 40.4, "Preu ($)": 399.15, "Diferència DCF-preu": -0.898784917950645, "Pes del valor terminal": 0.60048547596701}, "integ": {"Preu ($)": 399.15, "Valor DCF ($)": 40.4, "Valor sector ($)": 60.9019673295952, "Valor integrat ($)": 50.65, "Marge de seguretat": -0.873105348866341, "Decisió": "Cara / no comprar"}, "sint": {"Companyia": "Tesla", "Preu ($)": 399.15, "Valor integrat ($)": 50.65, "Marge": -0.873105348866341, "Conclusió": "Valoració molt exigent: la cotització incorpora expectatives sobre negocis futurs encara no reflectits en el FCF."}, "obj": {"PER objectiu": 45, "EV/EBITDA objectiu": 28, "EV/FCF objectiu": 35, "Raonament": "El PER clàssic és poc fiable per l’opcionalitat futura.", "Risc principal": "Molt sensible al robotaxi, la IA i l’energia."}, "vps": {"Múltiples propis": 64.6320075757576, "Mitjana 7M": 134.486956637156, "Sector tecnològic": 60.9019673295952, "Deute net per acció": -2.31156249999999}, "t9": {"Marge EBIT": 0.0459257384500195, "Marge FCF": 0.065593132757548, "Rendibilitat del FCF": 0.00440449805469183, "Lectura": "Marge operatiu reduït dins del grup."}, "t10": {"ROIC": 0.0460336152446205, "ROE": 0.0457853134616545, "Marge EBIT": 0.0459257384500195, "TCAA ingressos": 0.152102257393544, "Interpretació": "ROIC no normalitzat: vegeu el full 12_AUDITORIA."}, "t11": {"Ràtio corrent": 2.16440688654853, "Deute net/EBITDA": -0.774702465962102, "Deute net/FCF": -1.30815112540192, "Lectura": "Caixa neta segons el balanç del model."}, "t12": {"Creixement": "Alt però volàtil", "Qualitat financera": "Mitjana: solvència alta, rendibilitat baixa", "Valoració": "Molt exigent", "Risc principal": "Dependència d’expectatives sobre negocis futurs"}, "hist": [{"y": 2021, "rev": 53823, "ebitda": 9434, "ebit": 6523, "ni": 5519, "fcf": 5015, "cfo": 11497, "capex": -6482, "sh": 3380, "eps": 1.63284023668639, "eq": 31583, "ta": 62131, "dbt": 8873, "cash": 17576, "cc": 5015}, {"y": 2022, "rev": 81462, "ebitda": 17235, "ebit": 13692, "ni": 12556, "fcf": 7561, "cfo": 14724, "capex": -7163, "sh": 3470, "eps": 3.61844380403458, "eq": 45898, "ta": 82338, "dbt": 5748, "cash": 16253, "cc": 7561}, {"y": 2023, "rev": 96773, "ebitda": 13558, "ebit": 8891, "ni": 14997, "fcf": 4357, "cfo": 13256, "capex": -8899, "sh": 3480, "eps": 4.30948275862069, "eq": 63609, "ta": 106618, "dbt": 9573, "cash": 16398, "cc": 4357}, {"y": 2024, "rev": 97690, "ebitda": 13027, "ebit": 7659, "ni": 7091, "fcf": 3581, "cfo": 14923, "capex": -11342, "sh": 3490, "eps": 2.03180515759312, "eq": 73680, "ta": 122070, "dbt": 13623, "cash": 16139, "cc": 3581}, {"y": 2025, "rev": 94827, "ebitda": 10503, "ebit": 4355, "ni": 3794, "fcf": 6220, "cfo": 14747, "capex": -8527, "sh": 3520, "eps": 1.07784090909091, "eq": 82865, "ta": 137806, "dbt": 8376, "cash": 16513, "cc": 6220}], "mkt": [{"y": 2021, "px": 157.924556213018, "cap": 533785, "ev": 543927}, {"y": 2022, "px": 152.300288184438, "cap": 528482, "ev": 536790}, {"y": 2023, "px": 200.486781609195, "cap": 697694, "ev": 691647}, {"y": 2024, "px": 241.089111747851, "cap": 841401, "ev": 832698}, {"y": 2025, "px": 399.15, "cap": 1412192.7, "ev": 1404056}]}}, "names": ["Microsoft", "NVIDIA", "Alphabet", "Apple", "Amazon", "Meta", "Tesla"], "sector": {"per": 32.75, "ev": 28.2166666667}, "grp": {"PER": {"mitjana": 81.5475789376615, "mediana": 33.6658783314021}, "EV/EBITDA": {"mitjana": 40.4564001965676, "mediana": 29.1062381887798}, "EV/FCF": {"mitjana": 107.653340246677, "mediana": 107.891390882076}}, "sens": [[0.075, 0.02, 278.55, 152.66, 54.79, 92.91, 32.32, 89.19, 45.54], [0.075, 0.025, 299.13, 164.43, 58.39, 98.98, 34.86, 95.52, 48.41], [0.075, 0.03, 324.29, 178.82, 62.79, 106.41, 37.97, 103.25, 51.92], [0.085, 0.02, 229.08, 124.83, 45.9, 77.91, 26.05, 73.56, 38.54], [0.085, 0.025, 242.43, 132.47, 48.24, 81.85, 27.7, 77.67, 40.4], [0.085, 0.03, 258.21, 141.49, 51, 86.51, 29.65, 82.52, 42.6], [0.095, 0.02, 193.07, 104.68, 39.39, 66.92, 21.46, 62.11, 33.43], [0.095, 0.025, 202.21, 109.9, 40.98, 69.61, 22.58, 64.92, 34.7], [0.095, 0.03, 212.74, 115.93, 42.83, 72.72, 23.88, 68.16, 36.17]], "sensg": [[0.02, 123.54, 38.96, 48.24, 81.85, 27.7, 77.67, 31.37, null], [0.06, 171.85, 52.96, 66.63, 112.89, 40.68, 110, 41.8, null], [0.1, 237.64, 72.03, 91.68, 155.16, 58.35, 154.04, 56.01, null]], "hyp": [["Horitzó explícit de projecció", 10, "anys", "Període prou llarg per recollir el cicle inversor actual i prou curt per no projectar l’infinit."], ["Taxa de descompte", 0.085, "%", "Comuna a les set per mantenir una base homogènia de comparació. No és un WACC individual per empresa."], ["Creixement perpetu", 0.025, "%", "Coherent amb el creixement nominal a llarg termini d’una economia madura. Ha de ser inferior a la taxa de descompte."], ["Creixement mínim del FCF", 0.02, "%", "Terra del criteri de normalització: evita projectar caigudes o bases negatives."], ["Creixement màxim del FCF", 0.18, "%", "Sostre del criteri: evita extrapolar taxes històriques extraordinàries durant deu anys."], ["Ponderació DCF / sector", 0.5, "%", "Criteri propi: el valor integrat és la mitjana del DCF i de la referència sectorial."], ["Marge de compra", 0.2, "%", "Un marge igual o superior es considera compatible amb una possible compra."], ["Llindar de valoració exigent", -0.15, "%", "Per sota d’aquest marge la valoració es considera exigent."], ["Tipus impositiu", 0.21, "%", "Tipus federal dels Estats Units, utilitzat per obtenir el NOPAT."], ["Anys històrics", 5, "anys", "Exercicis carregats per a cada companyia."]]};
+/* ============ constants & state ============ */
+const CO = D.names;
+const H  = {r:.085, gp:.025, gmin:.02, gmax:.18, N:10, buy:.20, rich:-.15, w:.5};
+const state = {view:'resum', sel:'Microsoft', r:H.r, gp:H.gp, gmode:'model', gu:.06, w:H.w,
+               sortKey:'margin', sortDir:1};
+
+const isN = v => typeof v === 'number' && isFinite(v);
+const nf  = (v,d=2)=> isN(v) ? v.toLocaleString('ca-ES',{minimumFractionDigits:d,maximumFractionDigits:d}) : '—';
+const pc  = (v,d=1)=> isN(v) ? nf(v*100,d)+' %' : '—';
+const pcs = (v,d=1)=> isN(v) ? (v>0?'+':'')+pc(v,d) : '—';
+const usd = (v,d=2)=> isN(v) ? nf(v,d)+' $' : '—';
+const xx  = (v,d=1)=> isN(v) ? nf(v,d)+'x' : '—';
+const mm  = v => !isN(v) ? '—' : Math.abs(v)>=1e6 ? nf(v/1e6,2)+' B$' : nf(v,0)+' M$';
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+/* ============ motor de valoració — mateixa fórmula tancada del full 09_DCF ============ */
+function gOf(name){
+  if(state.gmode==='unif') return state.gu;
+  const t = D.comp[name].dcf['TCAA FCF històrica'];
+  const v = isN(t) ? t : H.gmin;
+  return Math.min(Math.max(v, H.gmin), H.gmax);
+}
+function calc(name){
+  const c = D.comp[name];
+  const f0 = c.dcf['FCF apalancat ($/acció)'];
+  const adj= c.dcf['Ajust financer ($/acció)'];
+  const g = gOf(name), r = state.r, gp = state.gp, N = H.N;
+  const k = (1+g)/(1+r);
+  const vp = Math.abs(k-1) < 1e-12 ? f0*N : f0*(k*(Math.pow(k,N)-1)/(k-1));
+  const vt = f0*Math.pow(1+g,N)*(1+gp)/(r-gp)/Math.pow(1+r,N);
+  const dcfv = Math.round((vp+vt+adj)*100)/100;
+  const sect = c.vps['Sector tecnològic'];
+  const integ = Math.round((state.w*dcfv + (1-state.w)*sect)*100)/100;
+  const px = c.ind['Preu ($)'];
+  const margin = integ/px - 1;
+  const dec = margin >= H.buy ? 'Comprar' : margin >= H.rich ? 'Mantenir' : 'Cara / no comprar';
+  const sh = c.ind['Accions (M)'], nd = c.ind['Deute net (mercat)'];
+  return {name, c, f0, adj, g, vp, vt, dcfv, sect, integ, px, margin, dec, sh, nd,
+          tvw: vt/(vp+vt), evDcf:(vp+vt+adj)*sh+nd, evInt: integ*sh+nd};
+}
+const all = () => CO.map(calc);
+const base = () => Math.abs(state.r-H.r)<1e-9 && Math.abs(state.gp-H.gp)<1e-9 &&
+                   state.gmode==='model' && Math.abs(state.w-H.w)<1e-9;
+const decCls = d => d==='Comprar' ? 'p-good' : d==='Mantenir' ? 'p-warn' : 'p-bad';
+const marCol = m => m>=H.buy ? 'var(--good)' : m>=H.rich ? 'var(--warn)' : 'var(--bad)';
+
+/* ============ eines SVG ============ */
+function svg(h, body, w){ w=w||720;
+  return `<svg class="chart" viewBox="0 0 ${w} ${h}" style="width:100%;height:auto" role="img">${body}</svg>`; }
+const tx  = (x,y,t,cls,anchor,extra)=>`<text x="${x}" y="${y}"${cls?` class="${cls}"`:''}${anchor?` text-anchor="${anchor}"`:''}${extra||''}>${t}</text>`;
+const rect= (x,y,w,h,st,extra)=>`<rect x="${x}" y="${y}" width="${Math.max(0,w)}" height="${Math.max(0,h)}" style="${st}"${extra||''}></rect>`;
+const line= (x1,y1,x2,y2,cls,st)=>`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"${cls?` class="${cls}"`:''}${st?` style="${st}"`:''}></line>`;
+const tip = (t,co)=>` data-tt="${esc(t)}"${co?` data-co="${esc(co)}" class="hit"`:''}`;
+
+/* barres divergents: marge de seguretat */
+function chartMargin(rows,w0){ const W=w0||720;
+  const L=96,R=64,top=26,rh=30,h=top+rows.length*rh+22;
+  const lo=Math.min(-0.05,...rows.map(d=>d.margin)), hi=Math.max(H.buy+.03,...rows.map(d=>d.margin));
+  const X=v=>L+(v-lo)/(hi-lo)*(W-L-R);
+  let s='';
+  [-.75,-.5,-.25,0,.25].filter(v=>v>=lo&&v<=hi).forEach(v=>{
+    s+=line(X(v),top-8,X(v),top+rows.length*rh,'grid'); s+=tx(X(v),h-8,pc(v,0),'','middle');});
+  s+=line(X(H.buy),top-8,X(H.buy),top+rows.length*rh,'','stroke:var(--good);stroke-width:1.5;stroke-dasharray:3 3');
+  s+=tx(X(H.buy),top-13,'marge de compra +20 %','','middle','style="fill:var(--good)"');
+  s+=line(X(0),top-8,X(0),top+rows.length*rh,'axis');
+  rows.forEach((d,i)=>{
+    const y=top+i*rh+6, bh=17, x0=X(0), x1=X(d.margin);
+    s+=rect(Math.min(x0,x1),y,Math.abs(x1-x0),bh,`fill:${marCol(d.margin)};opacity:${d.name===state.sel?1:.72};rx:2`,
+            tip(`${d.name} · marge ${pcs(d.margin)} · valor integrat ${usd(d.integ)} contra ${usd(d.px)}`,d.name)+' class="bar hit"');
+    s+=tx(L-10,y+13,esc(d.name),'lbl'+(d.name===state.sel?' on':''),'end');
+    const inside=(d.margin<0)&&(x1-8<L+4);
+    if(inside) s+=tx(x1+8,y+13,pcs(d.margin),'val','start','style="fill:var(--surface);font-weight:600"');
+    else if(d.margin<0) s+=tx(x1-7,y+13,pcs(d.margin),'val'+(d.name===state.sel?' on':''),'end');
+    else s+=tx(x1+7,y+13,pcs(d.margin),'val'+(d.name===state.sel?' on':''),'start');
+  });
+  return svg(h,s,W);
+}
+
+/* pinta preu contra les referències de valor */
+function chartMethods(rows,w0){ const W=w0||720;
+  const L=96,R=20,top=24,rh=34,h=top+rows.length*rh+26;
+  const hi=Math.max(...rows.flatMap(d=>[d.px,d.integ,d.dcfv,d.sect]))*1.06;
+  const X=v=>L+v/hi*(W-L-R);
+  let s='';
+  for(let i=0;i<=5;i++){const v=hi*i/5; s+=line(X(v),top-6,X(v),top+rows.length*rh,'grid'); s+=tx(X(v),h-8,nf(v,0),'','middle');}
+  rows.forEach((d,i)=>{
+    const y=top+i*rh+15;
+    s+=line(X(Math.min(d.dcfv,d.sect,d.px)),y,X(Math.max(d.dcfv,d.sect,d.px)),y,'','stroke:var(--rule);stroke-width:2');
+    const dot=(v,col,r0,t)=>`<circle cx="${X(v)}" cy="${y}" r="${r0}" style="fill:${col}"${tip(t,d.name)}></circle>`;
+    s+=dot(d.dcfv,'var(--accent)',5.5,`${d.name} · DCF ${usd(d.dcfv)}`);
+    s+=dot(d.sect,'var(--accentInk)',5.5,`${d.name} · referència sectorial ${usd(d.sect)}`);
+    s+=dot(d.integ,'var(--ink)',4,`${d.name} · valor integrat ${usd(d.integ)}`);
+    s+=`<path d="M${X(d.px)},${y-8} L${X(d.px)+7},${y} L${X(d.px)},${y+8} L${X(d.px)-7},${y} Z" style="fill:var(--price)"${tip(`${d.name} · preu de mercat ${usd(d.px)}`,d.name)}></path>`;
+    s+=tx(L-10,y+4,esc(d.name),'lbl'+(d.name===state.sel?' on':''),'end');
+  });
+  return svg(h,s,W);
+}
+
+/* cascada del DCF */
+function chartWaterfall(d,w0){ const W=w0||720;
+  const items=[['VP fluxos 1–10',d.vp,'var(--accent)'],['VP valor terminal',d.vt,'var(--accentInk)'],
+               ['Ajust financer',d.adj,d.adj<0?'var(--bad)':'var(--good)'],['Valor DCF',d.dcfv,'var(--ink)']];
+  const L=40,R=20,top=30,bot=52,h=250,bw=(W-L-R)/items.length;
+  let run=0; const pts=[];
+  items.forEach((it,i)=>{ if(i<3){pts.push([run,run+it[1]]); run+=it[1];} else pts.push([0,it[1]]); });
+  const lo=Math.min(0,...pts.flat()), hi=Math.max(...pts.flat())*1.1;
+  const Y=v=>top+(hi-v)/(hi-lo)*(h-top-bot);
+  let s=line(L,Y(0),W-R,Y(0),'axis');
+  items.forEach((it,i)=>{
+    const x=L+i*bw+bw*.22, w=bw*.56, a=Y(pts[i][0]), b=Y(pts[i][1]);
+    s+=rect(x,Math.min(a,b),w,Math.abs(b-a),`fill:${it[2]};rx:2`,tip(`${it[0]} · ${usd(it[1])}`));
+    s+=tx(x+w/2,Math.min(a,b)-7,usd(it[1],1),'val','middle');
+    s+=tx(x+w/2,h-30,esc(it[0]),'lbl','middle');
+    if(i<3) s+=line(x+w,b,x+bw,b,'','stroke:var(--rule2);stroke-dasharray:2 2');
+  });
+  s+=tx(L,top-12,`el valor terminal pesa ${pc(d.tvw,0)} del total`,'val','start','style="fill:var(--ink3)"');
+  return svg(h,s,W);
+}
+
+/* projecció descomptada */
+function chartProjection(d,w0){ const W=w0||720;
+  const L=44,R=20,top=24,bot=44,h=232,n=H.N,bw=(W-L-R)/(n+1.6);
+  const proj=[]; for(let t=1;t<=n;t++){const f=d.f0*Math.pow(1+d.g,t); proj.push({t,f,pv:f/Math.pow(1+state.r,t)});}
+  const hi=Math.max(...proj.map(p=>p.f))*1.12;
+  const Y=v=>top+(1-v/hi)*(h-top-bot);
+  let s=line(L,Y(0),W-R,Y(0),'axis');
+  for(let i=1;i<=4;i++){const v=hi*i/4; s+=line(L,Y(v),W-R,Y(v),'grid'); s+=tx(L-6,Y(v)+3,nf(v,0),'','end');}
+  proj.forEach((p,i)=>{
+    const x=L+i*bw+bw*.16, w=bw*.68;
+    s+=rect(x,Y(p.f),w,Y(0)-Y(p.f),'fill:var(--accentSoft);rx:2',tip(`Any ${p.t} · FCF projectat ${usd(p.f)}`));
+    s+=rect(x,Y(p.pv),w,Y(0)-Y(p.pv),'fill:var(--accent);rx:2',tip(`Any ${p.t} · valor present ${usd(p.pv)}`));
+    s+=tx(x+w/2,h-24,p.t,'','middle');
+  });
+  s+=tx(L,h-6,'Anys de projecció explícita','lbl','start');
+  return svg(h,s,W);
+}
+
+/* dispersió qualitat/creixement */
+function chartScatter(rows,xl,yl,fx,fy,w0){ const W=w0||720;
+  const L=56,R=26,top=22,bot=46,h=308;
+  const xs=rows.map(d=>d.x), ys=rows.map(d=>d.y);
+  const x0=Math.min(0,...xs), x1=Math.max(...xs)*1.1;
+  const y0=Math.min(0,...ys), y1=Math.max(...ys)*1.12;
+  const X=v=>L+(v-x0)/(x1-x0)*(W-L-R), Y=v=>top+(1-(v-y0)/(y1-y0))*(h-top-bot);
+  const rmax=Math.max(...rows.map(d=>d.s));
+  let s='';
+  for(let i=0;i<=4;i++){const v=y0+(y1-y0)*i/4; s+=line(L,Y(v),W-R,Y(v),'grid'); s+=tx(L-8,Y(v)+3,fy(v),'','end');}
+  for(let i=0;i<=4;i++){const v=x0+(x1-x0)*i/4; s+=tx(X(v),h-26,fx(v),'','middle');}
+  s+=line(L,Y(y0),W-R,Y(y0),'axis');
+  const placed=[];
+  const spot=(cx,cy,r0,wl)=>{
+    const cands=[[cx,cy-r0-7,'middle'],[cx,cy+r0+14,'middle'],[cx+r0+8,cy+4,'start'],[cx-r0-8,cy+4,'end'],
+                 [cx+r0+8,cy-r0+2,'start'],[cx-r0-8,cy-r0+2,'end'],[cx+r0+8,cy+r0+8,'start'],[cx-r0-8,cy+r0+8,'end'],
+                 [cx,cy-r0-21,'middle'],[cx,cy+r0+28,'middle']];
+    for(const c of cands){
+      const x0b=c[2]==='middle'?c[0]-wl/2:c[2]==='start'?c[0]:c[0]-wl;
+      if(!placed.some(p=>x0b<p[2]&&x0b+wl>p[0]&&Math.abs(c[1]-p[1])<12)){placed.push([x0b,c[1],x0b+wl]);return c;}
+    }
+    const c=cands[1]; placed.push([c[0]-wl/2,c[1],c[0]+wl/2]); return c;
+  };
+  let labs='';
+  rows.forEach(d=>{
+    const r0=8+18*Math.sqrt(d.s/rmax), on=d.name===state.sel;
+    s+=`<circle cx="${X(d.x)}" cy="${Y(d.y)}" r="${r0}" style="fill:${on?'var(--accent)':'var(--rule2)'};opacity:${on?.9:.55};stroke:var(--surface);stroke-width:1.5"${tip(d.tt,d.name)}></circle>`;
+    const p=spot(X(d.x),Y(d.y),r0,d.name.length*6.8);
+    labs+=tx(p[0],p[1],esc(d.name),'lbl'+(on?' on':''),p[2],' style="paint-order:stroke;stroke:var(--surface);stroke-width:3.5px;stroke-linejoin:round"');
+  });
+  s+=labs;
+  s+=tx(W-R,h-6,xl,'lbl','end');
+  s+=tx(L-46,top-8,yl,'lbl','start');
+  return svg(h,s,W);
+}
+
+/* barres agrupades amb escala retallable */
+function chartGroups(cats,series,fmt,hint,cap,w0){ const W=w0||720;
+  const L=96,R=16,top=26,rh=30,gap=16,h=top+cats.length*(rh*series.length+gap)+18;
+  const hi=(cap||Math.max(...cats.flatMap(c=>series.map(s=>c.v[s.k]||0))))*1.06;
+  const X=v=>L+Math.min(v,hi)/hi*(W-L-R);
+  let s='';
+  for(let i=0;i<=4;i++){const v=hi*i/4; s+=line(X(v),top-6,X(v),h-16,'grid'); s+=tx(X(v),h-4,fmt(v),'','middle');}
+  let y=top;
+  cats.forEach(c=>{
+    s+=tx(L-10,y+13,esc(c.label),'lbl'+(c.on?' on':''),'end');
+    series.forEach(se=>{
+      const v=c.v[se.k]||0, over=v>hi;
+      s+=rect(X(0),y+3,X(v)-X(0)-(over?9:0),rh-9,`fill:${se.col};opacity:${se.op||1};rx:2`,tip(`${c.label} · ${se.name}: ${fmt(v)}`));
+      if(over) s+=`<path d="M${X(hi)-9},${y+3} l9,${(rh-9)/2} l-9,${(rh-9)/2} z" style="fill:${se.col};opacity:${se.op||1}"></path>`;
+      s+=tx(X(v)+5,y+rh-11,fmt(v),'val','start',over?'style="fill:var(--ink);font-weight:600"':'');
+      y+=rh;
+    });
+    y+=gap;
+  });
+  return svg(h,s,W)+`<div class="legend">${series.map(se=>`<span><i style="background:${se.col};opacity:${se.op||1}"></i>${se.name}</span>`).join('')}${hint?`<span style="color:var(--ink3)">${hint}</span>`:''}</div>`;
+}
+
+/* mapa de calor r × g perpetu */
+function chartHeat(name){
+  const rs=[state.r-.01,state.r,state.r+.01], gs=[state.gp-.005,state.gp,state.gp+.005];
+  const cw=150,ch=52,L=104,top=46,h=top+rs.length*ch+34, w=L+gs.length*cw+16;
+  const vals=[]; const keep={r:state.r,gp:state.gp};
+  rs.forEach(r=>gs.forEach(gp=>{ state.r=r; state.gp=gp; vals.push(gp<r?calc(name):null); }));
+  state.r=keep.r; state.gp=keep.gp;
+  const ok=vals.filter(Boolean).map(v=>v.margin);
+  const lo=Math.min(...ok), hi=Math.max(...ok);
+  let s=tx(L+gs.length*cw/2,20,'Creixement perpetu','lbl','middle');
+  s+=tx(14,top-14,'Taxa de','lbl','start')+tx(14,top,'descompte','lbl','start');
+  gs.forEach((gp,j)=>s+=tx(L+j*cw+cw/2,top-8,pc(gp,2),'','middle'));
+  rs.forEach((r,i)=>{
+    s+=tx(L-12,top+i*ch+ch/2+4,pc(r,2),'','end');
+    gs.forEach((gp,j)=>{
+      const v=vals[i*gs.length+j]; const x=L+j*cw, y=top+i*ch;
+      if(!v){ s+=rect(x+2,y+2,cw-4,ch-4,'fill:var(--surface2);rx:5'); s+=tx(x+cw/2,y+ch/2+4,'—','','middle'); return; }
+      const t=hi===lo?.5:(v.margin-lo)/(hi-lo);
+      const cur=Math.abs(r-state.r)<1e-9&&Math.abs(gp-state.gp)<1e-9;
+      s+=rect(x+2,y+2,cw-4,ch-4,`fill:${marCol(v.margin)};opacity:${.14+t*.5};rx:5;stroke:${cur?'var(--ink)':'transparent'};stroke-width:${cur?1.5:0}`,
+              tip(`r ${pc(r,2)} · g∞ ${pc(gp,2)} → DCF ${usd(v.dcfv)} · valor integrat ${usd(v.integ)} · marge ${pcs(v.margin)}`));
+      s+=tx(x+cw/2,y+ch/2-2,usd(v.dcfv,1),'val','middle','style="font-size:13px;font-weight:600;fill:var(--ink)"');
+      s+=tx(x+cw/2,y+ch/2+15,pcs(v.margin),'','middle',`style="fill:${marCol(v.margin)};font-weight:600"`);
+    });
+  });
+  s+=tx(14,h-8,'La cel·la ressaltada és l’escenari actual dels controls.','lbl','start');
+  return svg(h,s,w);
+}
+
+/* valor en funció del creixement explícit */
+function chartGCurve(name,w0){ const W=w0||720;
+  const L=52,R=22,top=22,bot=44,h=250;
+  const keep={gmode:state.gmode,gu:state.gu};
+  const pts=[]; for(let g=0;g<=.20001;g+=.005){ state.gmode='unif'; state.gu=g; pts.push({g,v:calc(name)}); }
+  state.gmode=keep.gmode; state.gu=keep.gu;
+  const cur=calc(name), px=cur.px;
+  const hi=Math.max(px*1.15,...pts.map(p=>p.v.integ))*1.03, lo=0;
+  const X=g=>L+g/.20*(W-L-R), Y=v=>top+(1-(v-lo)/(hi-lo))*(h-top-bot);
+  let s='';
+  for(let i=0;i<=4;i++){const v=hi*i/4; s+=line(L,Y(v),W-R,Y(v),'grid'); s+=tx(L-7,Y(v)+3,nf(v,0),'','end');}
+  [0,.05,.10,.15,.20].forEach(g=>s+=tx(X(g),h-24,pc(g,0),'','middle'));
+  s+=line(L,Y(px),W-R,Y(px),'','stroke:var(--price);stroke-width:1.5;stroke-dasharray:4 3');
+  s+=tx(W-R,Y(px)-7,`preu ${usd(px,0)}`,'val','end','style="fill:var(--price)"');
+  s+=`<path d="${pts.map((p,i)=>(i?'L':'M')+X(p.g)+','+Y(p.v.integ)).join(' ')}" style="fill:none;stroke:var(--accent);stroke-width:2.5"></path>`;
+  const gm=gOf(name);
+  if(gm<=.20){ const kg={gmode:state.gmode,gu:state.gu}; state.gmode='unif'; state.gu=gm;
+    const at=calc(name); state.gmode=kg.gmode; state.gu=kg.gu;
+    s+=`<circle cx="${X(gm)}" cy="${Y(at.integ)}" r="5" style="fill:var(--accent);stroke:var(--surface);stroke-width:2"></circle>`;
+    s+=tx(X(gm),Y(at.integ)-12,`g aplicada ${pc(gm,1)}`,'val','middle'); }
+  s+=tx(L,top-8,'Valor integrat per acció','lbl','start');
+  s+=tx(W-R,h-6,'Creixement uniforme aplicat als anys 1–10','lbl','end');
+  return svg(h,s,W);
+}
+
+/* història de cinc exercicis */
+function chartHistory(name,w0){ const W=w0||720;
+  const c=D.comp[name].hist, L=54,R=54,top=24,bot=42,h=234,bw=(W-L-R)/c.length;
+  const hiR=Math.max(...c.map(x=>x.rev))*1.12;
+  const fl=c.map(x=>x.fcf), hiF=Math.max(...fl)*1.2, loF=Math.min(0,...fl);
+  const Y=v=>top+(1-v/hiR)*(h-top-bot), YF=v=>top+(1-(v-loF)/(hiF-loF))*(h-top-bot);
+  let s=line(L,Y(0),W-R,Y(0),'axis');
+  for(let i=1;i<=3;i++){const v=hiR*i/3; s+=line(L,Y(v),W-R,Y(v),'grid'); s+=tx(L-7,Y(v)+3,nf(v/1000,0)+'k','','end');}
+  c.forEach((x,i)=>{
+    const bx=L+i*bw+bw*.24;
+    s+=rect(bx,Y(x.rev),bw*.52,Y(0)-Y(x.rev),'fill:var(--accentSoft);rx:2',tip(`${x.y} · ingressos ${mm(x.rev)}`));
+    s+=tx(L+i*bw+bw/2,h-22,x.y,'','middle');
+  });
+  s+=`<path d="${c.map((x,i)=>(i?'L':'M')+(L+i*bw+bw/2)+','+YF(x.fcf)).join(' ')}" style="fill:none;stroke:var(--price);stroke-width:2.5"></path>`;
+  c.forEach((x,i)=>{ s+=`<circle cx="${L+i*bw+bw/2}" cy="${YF(x.fcf)}" r="4" style="fill:var(--price);stroke:var(--surface);stroke-width:1.5"${tip(`${x.y} · FCF apalancat ${mm(x.fcf)}`)}></circle>`; });
+  s+=tx(W-R+6,YF(fl[fl.length-1])-4,'FCF','val','start','style="fill:var(--price)"');
+  s+=tx(W-R+6,YF(fl[fl.length-1])+9,nf(fl[fl.length-1]/1000,0)+'k','val','start','style="fill:var(--price)"');
+  s+=tx(L-46,top-8,'Ingressos (milers de M$)','lbl','start');
+  return svg(h,s,W);
+}
+/* ============ vistes ============ */
+const VIEWS=[
+ {id:'resum',k:'01',t:'Panoràmica',ki:'Vista general',
+  lede:'Set companyies, un mateix procediment: un DCF simplificat sobre el flux de caixa lliure per acció i una referència sectorial, ponderats. La pregunta és sempre la mateixa: què paga el mercat i què diu el model.'},
+ {id:'valoracio',k:'02',t:'Valoració',ki:'Com es forma el valor',
+  lede:'D’on surt el valor per acció de la companyia seleccionada: la projecció explícita, el valor terminal, l’ajust per posició financera i el contrast amb les altres referències.'},
+ {id:'qualitat',k:'03',t:'Qualitat financera',ki:'Capítol 5 del treball',
+  lede:'Rendibilitat, marges, conversió en caixa i solvència. És la capa que explica per què dues companyies amb el mateix múltiple no valen el mateix.'},
+ {id:'multiples',k:'04',t:'Múltiples',ki:'Valoració relativa',
+  lede:'El que paga el mercat avui contra tres referències: els múltiples objectiu del treball, la mediana del grup i el sector tecnològic.'},
+ {id:'escenaris',k:'05',t:'Escenaris',ki:'Sensibilitat en viu',
+  lede:'Els controls de l’esquerra recalculen el model sencer. Aquesta vista mostra fins on s’ha de moure cada hipòtesi perquè la conclusió canviï.'},
+ {id:'dades',k:'06',t:'Dades i advertiments',ki:'Traçabilitat',
+  lede:'Totes les magnituds del motor d’indicadors, les hipòtesis del model i les limitacions que el treball reconeix explícitament.'}
+];
+
+function tableAll(rows){
+  const cols=[['name','Companyia',0],['px','Preu',1],['dcfv','DCF',1],['sect','Sector',1],
+              ['integ','Valor integrat',1],['margin','Marge',1],['tvw','Pes VT',1],['dec','Decisió',0]];
+  const sorted=[...rows].sort((a,b)=>{
+    const k=state.sortKey; let x=a[k],y=b[k];
+    if(typeof x==='string') return state.sortDir*x.localeCompare(y,'ca');
+    return state.sortDir*(x-y);
+  });
+  return `<div class="scroll"><table>
+    <thead><tr>${cols.map(c=>`<th class="sortable" data-sort="${c[0]}"${c[2]?' style="text-align:right"':''}>${c[1]}${state.sortKey===c[0]?(state.sortDir>0?' ▲':' ▼'):''}</th>`).join('')}</tr></thead>
+    <tbody>${sorted.map(d=>`<tr data-co="${esc(d.name)}"${d.name===state.sel?' class="on"':''}>
+      <td><span class="nm">${esc(d.name)}</span> <span class="mono" style="color:var(--ink3);font-size:11px">${esc(d.c.ticker)}</span></td>
+      <td class="n">${usd(d.px)}</td><td class="n">${usd(d.dcfv)}</td><td class="n">${usd(d.sect)}</td>
+      <td class="n">${usd(d.integ)}</td>
+      <td class="n" style="color:${marCol(d.margin)};font-weight:600">${pcs(d.margin)}</td>
+      <td class="n">${pc(d.tvw,0)}</td>
+      <td style="text-align:right"><span class="pill ${decCls(d.dec)}">${esc(d.dec)}</span></td></tr>`).join('')}</tbody></table></div>`;
+}
+
+function vResum(){
+  const rows=all();
+  const sorted=[...rows].sort((a,b)=>b.margin-a.margin);
+  const avg=rows.reduce((s,d)=>s+d.margin,0)/7;
+  const nBuy=rows.filter(d=>d.dec==='Comprar').length, nHold=rows.filter(d=>d.dec==='Mantenir').length;
+  const cap=rows.reduce((s,d)=>s+d.c.ind['Capitalització'],0);
+  const tv=rows.reduce((s,d)=>s+d.tvw,0)/7;
+  return `
+  <div class="kpis" style="margin-bottom:16px">
+    <div class="kpi"><div class="v" style="color:${marCol(avg)}">${pcs(avg)}</div><div class="l">Marge de seguretat mitjà de les set</div></div>
+    <div class="kpi"><div class="v">${nBuy}<span style="color:var(--ink3);font-size:16px"> / 7</span></div><div class="l">Companyies que arriben al marge de compra del 20 %</div></div>
+    <div class="kpi"><div class="v">${nHold}<span style="color:var(--ink3);font-size:16px"> / 7</span></div><div class="l">En zona de manteniment</div></div>
+    <div class="kpi"><div class="v">${mm(cap)}</div><div class="l">Capitalització conjunta a l’11/06/2026</div></div>
+    <div class="kpi"><div class="v">${pc(tv,0)}</div><div class="l">Pes mitjà del valor terminal dins del DCF</div></div>
+  </div>
+  <div class="grid" style="grid-template-columns:1fr">
+    <section class="card">
+      <header><h3>Marge de seguretat per companyia</h3><span class="eyebrow">Valor integrat contra preu</span></header>
+      ${chartMargin(sorted,1000)}
+      <p class="note">${base()
+        ? `Amb l’escenari base del treball cap companyia arriba al llindar de compra. <b>Microsoft (${pcs(rows[0].margin)})</b> i <b>Meta (${pcs(rows[5].margin)})</b> queden en zona de manteniment; les altres cinc, per sota del llindar exigent del −15 %.`
+        : `Escenari modificat. ${nBuy===0?'Encara cap companyia arriba al marge de compra del 20 %.':`Ara ${nBuy===1?'una companyia arriba':`${nBuy} companyies arriben`} al marge de compra.`} Torna a l’escenari base per comparar amb el treball publicat.`}</p>
+    </section>
+    <section class="card">
+      <header><h3>Preu contra les tres referències de valor</h3><span class="eyebrow">Dòlars per acció</span></header>
+      ${chartMethods(sorted,1000)}
+      <div class="legend">
+        <span><i style="background:var(--price)"></i>Preu de mercat</span>
+        <span><i style="background:var(--accent)"></i>Valor DCF</span>
+        <span><i style="background:var(--accentInk)"></i>Referència sectorial</span>
+        <span><i style="background:var(--ink)"></i>Valor integrat</span>
+      </div>
+      <p class="note">La distància entre els dos punts blaus és la tensió central del treball: el DCF penalitza qui inverteix molt avui, la referència sectorial premia qui té benefici i EBITDA alts. <b>Alphabet</b> n’és el cas extrem — ${usd(D.comp.Alphabet.vps['Sector tecnològic'],0)} per múltiples contra ${usd(rows[2].dcfv,0)} per fluxos.</p>
+    </section>
+    <section class="card">
+      <header><h3>Quadre de decisió</h3><span class="eyebrow">Clica una fila per seleccionar-la</span></header>
+      ${tableAll(rows)}
+      <p class="note">Llindars del treball: marge ≥ +20 % compra, entre −15 % i +20 % manteniment, per sota valoració exigent. El pes del valor terminal indica quina part del DCF depèn de supòsits de molt llarg termini.</p>
+    </section>
+    <section class="card">
+      <header><h3>Tres lectures que el model deixa a la vista</h3></header>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+        <div class="callout"><b>El valor terminal mana.</b> Entre el ${pc(Math.min(...rows.map(d=>d.tvw)),0)} i el ${pc(Math.max(...rows.map(d=>d.tvw)),0)} del valor DCF ve de després de l’any deu. Com més curta és la vida projectada, més decisiu és el supòsit de perpetuïtat.</div>
+        <div class="callout"><b>La mitjana del grup no serveix de referència.</b> El PER mitjà de les set és ${xx(D.grp['PER'].mitjana)} i la mediana ${xx(D.grp['PER'].mediana)}: Tesla, amb ${xx(D.comp.Tesla.ind['PER'])}, arrossega la mitjana tota sola.</div>
+        <div class="callout"><b>Invertir avui costa valor avui.</b> Alphabet i Meta tenen marges EBIT del ${pc(D.comp.Alphabet.ind['Marge EBIT'],0)} i el ${pc(D.comp.Meta.ind['Marge EBIT'],0)}, però el CAPEX els deixa el marge de FCF al ${pc(D.comp.Alphabet.ind['Marge FCF'],1)} i el ${pc(D.comp.Meta.ind['Marge FCF'],1)}. El DCF ho llegeix com a menys valor.</div>
+      </div>
+    </section>
+  </div>`;
+}
+
+function vValoracio(){
+  const d=calc(state.sel), c=d.c, ind=c.ind, vps=c.vps;
+  const meth=[['Valor DCF',d.dcfv,'Descompte de fluxos amb les hipòtesis actuals'],
+              ['Múltiples propis',vps['Múltiples propis'],'Múltiples objectiu fixats al treball'],
+              ['Mitjana de les 7M',vps['Mitjana 7M'],'Referència distorsionada pels extrems del grup'],
+              ['Sector tecnològic',vps['Sector tecnològic'],'PER i EV/EBITDA sectorials'],
+              ['Valor integrat',d.integ,'Ponderació actual DCF / sector'],
+              ['Preu de mercat',d.px,'Cotització a l’11 de juny de 2026']];
+  return `
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(430px,1fr))">
+    <section class="card">
+      <header><h3>Com es forma el valor DCF</h3><span class="eyebrow">${esc(state.sel)} · $/acció</span></header>
+      ${chartWaterfall(d,520)}
+      <p class="note">Partint d’un FCF apalancat de <b>${usd(d.f0)}</b> per acció i un creixement aplicat del <b>${pc(d.g,2)}</b>, descomptat al <b>${pc(state.r,2)}</b> amb perpetuïtat al <b>${pc(state.gp,2)}</b>.</p>
+    </section>
+    <section class="card">
+      <header><h3>Fluxos projectats i valor present</h3><span class="eyebrow">Anys 1–10</span></header>
+      ${chartProjection(d,520)}
+      <div class="legend"><span><i style="background:var(--accentSoft)"></i>FCF nominal projectat</span><span><i style="background:var(--accent)"></i>Valor present</span></div>
+      <p class="note">La franja clara és el que el model espera cobrar; la fosca, el que val avui. La diferència creixent és el cost del temps al ${pc(state.r,2)}.</p>
+    </section>
+    <section class="card wide">
+      <header><h3>Totes les referències de valor per acció</h3><span class="eyebrow">${esc(state.sel)}</span></header>
+      <div class="scroll"><table>
+        <thead><tr><th>Referència</th><th>Valor per acció</th><th>Contra el preu</th><th>EV implícit</th><th style="text-align:left">Què és</th></tr></thead>
+        <tbody>${meth.map(m=>{const gap=m[1]/d.px-1; const ev=m[1]*d.sh+d.nd;
+          return `<tr><td><span class="nm">${m[0]}</span></td><td class="n">${usd(m[1])}</td>
+          <td class="n" style="color:${m[0]==='Preu de mercat'?'var(--ink3)':marCol(gap)};font-weight:600">${m[0]==='Preu de mercat'?'—':pcs(gap)}</td>
+          <td class="n">${mm(ev)}</td><td style="text-align:left;white-space:normal;color:var(--ink2);font-size:12.5px">${m[2]}</td></tr>`;}).join('')}</tbody></table></div>
+      <p class="note">L’EV implícit converteix cada valor per acció en valor d’empresa afegint-hi el deute net de ${mm(d.nd)}. L’EV de mercat observat és ${mm(ind['Valor d’empresa'])}.</p>
+    </section>
+    <section class="card">
+      <header><h3>Fitxa de valoració</h3><span class="eyebrow">${esc(c.ticker)} · exercici ${c.year}</span></header>
+      <dl class="facts">
+        <dt>Preu de mercat</dt><dd>${usd(d.px)}</dd>
+        <dt>Valor DCF</dt><dd style="color:var(--accent)">${usd(d.dcfv)}</dd>
+        <dt>Referència sectorial</dt><dd>${usd(d.sect)}</dd>
+        <dt>Valor integrat</dt><dd style="font-weight:600">${usd(d.integ)}</dd>
+        <dt>Marge de seguretat</dt><dd style="color:${marCol(d.margin)};font-weight:600">${pcs(d.margin)}</dd>
+        <dt>Decisió</dt><dd><span class="pill ${decCls(d.dec)}">${esc(d.dec)}</span></dd>
+      </dl>
+      <div class="hr"></div>
+      <dl class="facts">
+        <dt>FCF apalancat per acció</dt><dd>${usd(d.f0)}</dd>
+        <dt>TCAA històrica del FCF</dt><dd>${isN(c.dcf['TCAA FCF històrica'])?pc(c.dcf['TCAA FCF històrica'],2):'N/D'}</dd>
+        <dt>Creixement aplicat</dt><dd>${pc(d.g,2)}</dd>
+        <dt>Ajust financer per acció</dt><dd>${usd(d.adj)}</dd>
+        <dt>Pes del valor terminal</dt><dd>${pc(d.tvw,1)}</dd>
+        <dt>Accions diluïdes</dt><dd>${nf(d.sh,0)} M</dd>
+      </dl>
+      <p class="note">${esc(c.sint['Conclusió'])}</p>
+    </section>
+    <section class="card">
+      <header><h3>Evolució de cinc exercicis</h3><span class="eyebrow">Ingressos i FCF apalancat</span></header>
+      ${chartHistory(state.sel,520)}
+      <p class="note">Ingressos en barres, flux de caixa lliure en línia. La divergència entre les dues és exactament el que el DCF castiga o premia.</p>
+    </section>
+  </div>`;
+}
+
+function vQualitat(){
+  const rows=all();
+  const sc=rows.map(d=>({name:d.name, x:d.c.ind['TCAA ingressos'], y:d.c.ind['ROIC'],
+    s:d.c.ind['Capitalització'], tt:`${d.name} · ROIC ${pc(d.c.ind['ROIC'])} · creixement d’ingressos ${pc(d.c.ind['TCAA ingressos'])} · capitalització ${mm(d.c.ind['Capitalització'])}`}));
+  const marg=rows.map(d=>({label:d.name,on:d.name===state.sel,v:{ebit:d.c.ind['Marge EBIT'],fcf:d.c.ind['Marge FCF']}}));
+  return `
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(430px,1fr))">
+    <section class="card wide">
+      <header><h3>Rendibilitat contra creixement</h3><span class="eyebrow">Mida del cercle: capitalització</span></header>
+      ${chartScatter(sc,'Creixement anual dels ingressos (5 anys)','ROIC',v=>pc(v,0),v=>pc(v,0),1000)}
+      <p class="note">El quadrant superior dret és el que tota valoració voldria: rendir molt i créixer molt. <b>NVIDIA</b> hi és sola, amb un ROIC del ${pc(D.comp.NVIDIA.ind['ROIC'],0)} i un creixement del ${pc(D.comp.NVIDIA.ind['TCAA ingressos'],0)}. El model, però, li limita el creixement projectat al 18 % precisament perquè aquestes taxes no es poden extrapolar deu anys.</p>
+    </section>
+    <section class="card">
+      <header><h3>Del marge operatiu al marge de caixa</h3></header>
+      ${chartGroups(marg,[{k:'ebit',name:'Marge EBIT',col:'var(--accentInk)'},{k:'fcf',name:'Marge FCF',col:'var(--accent)',op:.55}],v=>pc(v,0),'',null,520)}
+      <p class="note">La caiguda entre les dues barres és el cost del cicle inversor. A <b>Alphabet</b> i <b>Meta</b> la conversió es queda per sota d’un terç del marge operatiu.</p>
+    </section>
+    <section class="card">
+      <header><h3>Liquiditat i solvència</h3><span class="eyebrow">Taula 11 del treball</span></header>
+      <div class="scroll"><table>
+        <thead><tr><th>Companyia</th><th>Ràtio corrent</th><th>DN/EBITDA</th><th>DN/FCF</th></tr></thead>
+        <tbody>${rows.map(d=>`<tr data-co="${esc(d.name)}"${d.name===state.sel?' class="on"':''}>
+          <td><span class="nm">${esc(d.name)}</span></td>
+          <td class="n">${xx(d.c.ind['Ràtio corrent'],2)}</td>
+          <td class="n">${xx(d.c.ind['Deute net/EBITDA'],2)}</td>
+          <td class="n">${xx(d.c.ind['Deute net/FCF'],2)}</td></tr>`).join('')}</tbody></table></div>
+      <p class="note">Els valors negatius de Tesla i NVIDIA indiquen caixa neta. El ROE d’Apple, del ${pc(D.comp.Apple.ind['ROE'],0)}, no mesura una rendibilitat excepcional sinó un patrimoni net reduït per anys de recompres.</p>
+    </section>
+    <section class="card wide">
+      <header><h3>Síntesi qualitativa</h3><span class="eyebrow">Taula 12 del treball</span></header>
+      <div class="scroll"><table>
+        <thead><tr><th>Companyia</th><th style="text-align:left">Creixement</th><th style="text-align:left">Qualitat financera</th><th style="text-align:left">Valoració</th><th style="text-align:left">Risc principal</th></tr></thead>
+        <tbody>${rows.map(d=>`<tr data-co="${esc(d.name)}"${d.name===state.sel?' class="on"':''}>
+          <td><span class="nm">${esc(d.name)}</span></td>
+          ${['Creixement','Qualitat financera','Valoració','Risc principal'].map(k=>`<td style="text-align:left;white-space:normal;font-size:12.5px;color:var(--ink2)">${esc(d.c.t12[k])}</td>`).join('')}
+        </tr>`).join('')}</tbody></table></div>
+    </section>
+  </div>`;
+}
+
+function vMultiples(){
+  const rows=all();
+  const per=rows.map(d=>({label:d.name,on:d.name===state.sel,v:{a:d.c.ind['PER'],b:d.c.obj['PER objectiu'],c:D.sector.per}}));
+  const ev =rows.map(d=>({label:d.name,on:d.name===state.sel,v:{a:d.c.ind['EV/EBITDA'],b:d.c.obj['EV/EBITDA objectiu'],c:D.sector.ev}}));
+  const S=[{k:'a',name:'Múltiple actual',col:'var(--price)'},{k:'b',name:'Objectiu del treball',col:'var(--accent)'},{k:'c',name:'Sector tecnològic',col:'var(--rule2)'}];
+  return `
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(430px,1fr))">
+    <section class="card">
+      <header><h3>PER</h3><span class="eyebrow">Actual · objectiu · sector</span></header>
+      ${chartGroups(per,S,v=>xx(v,1),'Escala retallada; Tesla marcada amb punta',45,520)}
+    </section>
+    <section class="card">
+      <header><h3>EV / EBITDA</h3><span class="eyebrow">Actual · objectiu · sector</span></header>
+      ${chartGroups(ev,S,v=>xx(v,1),'Escala retallada; Tesla marcada amb punta',40,520)}
+    </section>
+    <section class="card wide">
+      <header><h3>Taula 13 · múltiples de mercat i distància a l’objectiu</h3></header>
+      <div class="scroll"><table>
+        <thead><tr><th>Companyia</th><th>PER</th><th>PER objectiu</th><th>EV/EBITDA</th><th>EV/FCF</th><th>PEG</th><th>Rendibilitat del FCF</th></tr></thead>
+        <tbody>${rows.map(d=>{const p=d.c.ind, o=d.c.obj, gap=p['PER']/o['PER objectiu']-1;
+          return `<tr data-co="${esc(d.name)}"${d.name===state.sel?' class="on"':''}>
+          <td><span class="nm">${esc(d.name)}</span></td>
+          <td class="n">${xx(p['PER'])}</td>
+          <td class="n" style="color:${gap>0?'var(--bad)':'var(--good)'}">${xx(o['PER objectiu'],0)} <span style="font-size:10.5px;opacity:.75">${pcs(gap,0)}</span></td>
+          <td class="n">${xx(p['EV/EBITDA'])}</td><td class="n">${xx(p['EV/FCF'])}</td>
+          <td class="n">${isN(p['PEG'])?nf(p['PEG'],2):'N/D'}</td><td class="n">${pc(p['Rendibilitat FCF'],2)}</td></tr>`;}).join('')}
+        <tr style="background:var(--surface2)"><td><span class="nm">Mediana del grup</span></td>
+          <td class="n">${xx(D.grp['PER'].mediana)}</td><td class="n">—</td>
+          <td class="n">${xx(D.grp['EV/EBITDA'].mediana)}</td><td class="n">${xx(D.grp['EV/FCF'].mediana)}</td><td class="n">—</td><td class="n">—</td></tr>
+        <tr style="background:var(--surface2)"><td><span class="nm">Mitjana del grup</span></td>
+          <td class="n">${xx(D.grp['PER'].mitjana)}</td><td class="n">—</td>
+          <td class="n">${xx(D.grp['EV/EBITDA'].mitjana)}</td><td class="n">${xx(D.grp['EV/FCF'].mitjana)}</td><td class="n">—</td><td class="n">—</td></tr>
+        </tbody></table></div>
+      <p class="note">La distància al costat del PER objectiu és el que el mercat paga de més o de menys respecte de la hipòtesi pròpia del treball. Les dues últimes files mostren per què la mitjana del grup no és una referència utilitzable: <b>${xx(D.grp['PER'].mitjana)} contra ${xx(D.grp['PER'].mediana)}</b> de mediana.</p>
+    </section>
+    <section class="card wide">
+      <header><h3>Múltiples objectiu i el seu raonament</h3><span class="eyebrow">Hipòtesi pròpia del treball</span></header>
+      <div class="scroll"><table>
+        <thead><tr><th>Companyia</th><th>PER</th><th>EV/EBITDA</th><th>EV/FCF</th><th style="text-align:left">Raonament</th><th style="text-align:left">Risc principal</th></tr></thead>
+        <tbody>${rows.map(d=>`<tr data-co="${esc(d.name)}"${d.name===state.sel?' class="on"':''}>
+          <td><span class="nm">${esc(d.name)}</span></td>
+          <td class="n">${nf(d.c.obj['PER objectiu'],0)}</td><td class="n">${nf(d.c.obj['EV/EBITDA objectiu'],0)}</td><td class="n">${nf(d.c.obj['EV/FCF objectiu'],0)}</td>
+          <td style="text-align:left;white-space:normal;font-size:12.5px;color:var(--ink2)">${esc(d.c.obj['Raonament'])}</td>
+          <td style="text-align:left;white-space:normal;font-size:12.5px;color:var(--ink2)">${esc(d.c.obj['Risc principal'])}</td></tr>`).join('')}</tbody></table></div>
+    </section>
+  </div>`;
+}
+function withBase(fn){
+  const k={r:state.r,gp:state.gp,gmode:state.gmode,gu:state.gu,w:state.w};
+  state.r=H.r; state.gp=H.gp; state.gmode='model'; state.w=H.w;
+  const out=fn();
+  Object.assign(state,k);
+  return out;
+}
+
+function vEscenaris(){
+  const now=all(), bas=withBase(all);
+  const nBuy=now.filter(d=>d.dec==='Comprar').length;
+  const sel=calc(state.sel), selB=bas.find(d=>d.name===state.sel);
+  return `
+  <div class="grid" style="grid-template-columns:1fr">
+    <section class="card">
+      <header><h3>L’escenari actual contra el del treball</h3>
+        <span class="eyebrow">${base()?'Ara mateix coincideixen':'Difereixen'}</span></header>
+      <div class="scroll"><table>
+        <thead><tr><th>Companyia</th><th>Valor integrat base</th><th>Valor integrat ara</th><th>Variació</th><th>Marge base</th><th>Marge ara</th><th style="text-align:right">Decisió ara</th></tr></thead>
+        <tbody>${now.map((d,i)=>{const b=bas[i], dv=d.integ/b.integ-1;
+          return `<tr data-co="${esc(d.name)}"${d.name===state.sel?' class="on"':''}>
+          <td><span class="nm">${esc(d.name)}</span></td>
+          <td class="n" style="color:var(--ink3)">${usd(b.integ)}</td>
+          <td class="n" style="font-weight:600">${usd(d.integ)}</td>
+          <td class="n" style="color:${Math.abs(dv)<1e-9?'var(--ink3)':dv>0?'var(--good)':'var(--bad)'}">${Math.abs(dv)<1e-9?'sense canvi':pcs(dv)}</td>
+          <td class="n" style="color:var(--ink3)">${pcs(b.margin)}</td>
+          <td class="n" style="color:${marCol(d.margin)};font-weight:600">${pcs(d.margin)}</td>
+          <td style="text-align:right"><span class="pill ${decCls(d.dec)}">${esc(d.dec)}</span></td></tr>`;}).join('')}</tbody></table></div>
+      <p class="note">${nBuy===0
+        ? 'Cap companyia arriba al marge de compra del 20 % en aquest escenari. Al treball, la mateixa conclusió es manté en els dotze escenaris analitzats.'
+        : `<b>${nBuy===1?'Una companyia arriba':`${nBuy} companyies arriben`}</b> al marge de compra en aquest escenari. Val la pena comprovar quina hipòtesi ho provoca abans de treure’n cap conclusió.`}</p>
+    </section>
+
+    <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(430px,1fr));gap:16px">
+      <section class="card">
+        <header><h3>Taxa de descompte contra creixement perpetu</h3><span class="eyebrow">${esc(state.sel)}</span></header>
+        <div class="scroll">${chartHeat(state.sel)}</div>
+        <p class="note">Cada cel·la recalcula el DCF sencer i el torna a integrar amb la referència sectorial. La xifra gran és el valor DCF per acció —amb els valors base, exactament la taula 17 del treball— i la petita, el marge de seguretat resultant sobre el valor integrat.</p>
+      </section>
+      <section class="card">
+        <header><h3>Quant creixement caldria</h3><span class="eyebrow">${esc(state.sel)}</span></header>
+        ${chartGCurve(state.sel,520)}
+        <p class="note">${(function(){
+          const px=sel.px; const k={gmode:state.gmode,gu:state.gu}; let need=null;
+          for(let g=0;g<=.60001;g+=.0025){ state.gmode='unif'; state.gu=g; if(calc(state.sel).margin>=H.buy){need=g;break;} }
+          Object.assign(state,k);
+          return need===null
+            ? `Ni amb un creixement uniforme del 60 % anual durant deu anys el valor integrat de ${esc(state.sel)} arriba al marge de compra del 20 % sobre el preu de ${usd(px,0)}. La distància no és una qüestió d’hipòtesis: és de preu.`
+            : `${esc(state.sel)} necessitaria un creixement uniforme del <b>${pc(need,1)}</b> anual durant deu anys perquè el valor integrat superés el preu amb un marge del 20 %.`;
+        })()}</p>
+      </section>
+    </div>
+
+    <section class="card">
+      <header><h3>Què mou realment el resultat</h3><span class="eyebrow">${esc(state.sel)} · efecte aïllat de cada palanca</span></header>
+      <div class="scroll"><table>
+        <thead><tr><th>Palanca</th><th>Base</th><th>Actual</th><th>Valor integrat</th><th>Efecte sobre el marge</th></tr></thead>
+        <tbody>
+        ${[['Taxa de descompte',pc(H.r,2),pc(state.r,2)],
+           ['Creixement perpetu',pc(H.gp,2),pc(state.gp,2)],
+           ['Creixement anys 1–10',pc(withBase(()=>gOf(state.sel)),2),pc(sel.g,2)],
+           ['Pes del DCF',pc(H.w,0),pc(state.w,0)]].map((p,i)=>{
+            const k={r:state.r,gp:state.gp,gmode:state.gmode,gu:state.gu,w:state.w};
+            state.r=H.r; state.gp=H.gp; state.gmode='model'; state.w=H.w;
+            if(i===0) state.r=k.r; if(i===1) state.gp=k.gp;
+            if(i===2){state.gmode=k.gmode; state.gu=k.gu;} if(i===3) state.w=k.w;
+            const one=calc(state.sel); Object.assign(state,k);
+            const dm=one.margin-selB.margin;
+            return `<tr><td><span class="nm">${p[0]}</span></td><td class="n" style="color:var(--ink3)">${p[1]}</td><td class="n">${p[2]}</td>
+              <td class="n">${usd(one.integ)}</td>
+              <td class="n" style="color:${Math.abs(dm)<1e-9?'var(--ink3)':dm>0?'var(--good)':'var(--bad)'};font-weight:600">${Math.abs(dm)<1e-9?'—':pcs(dm)+' pp'}</td></tr>`;
+           }).join('')}
+        <tr style="background:var(--surface2)"><td><span class="nm">Totes alhora</span></td>
+          <td class="n" style="color:var(--ink3)">marge ${pcs(selB.margin)}</td><td class="n">marge ${pcs(sel.margin)}</td>
+          <td class="n" style="font-weight:600">${usd(sel.integ)}</td>
+          <td class="n" style="color:${Math.abs(sel.margin-selB.margin)<1e-9?'var(--ink3)':marCol(sel.margin)};font-weight:600">${Math.abs(sel.margin-selB.margin)<1e-9?'—':pcs(sel.margin-selB.margin)+' pp'}</td></tr>
+        </tbody></table></div>
+      <p class="note">Cada fila mou només una palanca i deixa la resta a l’escenari base. Serveix per veure quina hipòtesi domina el resultat abans de discutir-les totes alhora.</p>
+    </section>
+  </div>`;
+}
+
+function vDades(){
+  const rows=all();
+  const F=[['Ingressos',v=>mm(v)],['EBITDA',v=>mm(v)],['EBIT',v=>mm(v)],['Benefici net',v=>mm(v)],
+           ['FCF apalancat',v=>mm(v)],['FCF per acció ($)',v=>usd(v)],['BPA ($)',v=>usd(v)],
+           ['TCAA ingressos',v=>pc(v,1)],['Marge EBIT',v=>pc(v,1)],['Marge FCF',v=>pc(v,1)],
+           ['ROIC',v=>pc(v,1)],['ROE',v=>pc(v,1)],['Ràtio corrent',v=>xx(v,2)],
+           ['Deute net (mercat)',v=>mm(v)],['Capitalització',v=>mm(v)],['Valor d’empresa',v=>mm(v)]];
+  return `
+  <div class="grid" style="grid-template-columns:1fr">
+    <section class="card">
+      <header><h3>Motor d’indicadors</h3><span class="eyebrow">Full 06_INDICADORS · taules 6 i 7</span></header>
+      <div class="scroll"><table>
+        <thead><tr><th style="text-align:left">Magnitud</th>${rows.map(d=>`<th${d.name===state.sel?' style="color:var(--accent)"':''}>${esc(d.c.ticker)}</th>`).join('')}</tr></thead>
+        <tbody>${F.map(f=>`<tr><td style="text-align:left"><span class="nm">${f[0]}</span></td>
+          ${rows.map(d=>`<td class="n"${d.name===state.sel?' style="background:var(--accentFaint)"':''}>${isN(d.c.ind[f[0]])?f[1](d.c.ind[f[0]]):'N/D'}</td>`).join('')}</tr>`).join('')}</tbody></table></div>
+      <p class="note">B$ = bilions de dòlars (milions de milions). Exercicis tancats el 2025, excepte NVIDIA, que tanca el gener de 2026.</p>
+    </section>
+    <section class="card">
+      <header><h3>Hipòtesis del model</h3><span class="eyebrow">Full 03_HIPOTESIS · taula 8</span></header>
+      <div class="scroll"><table>
+        <thead><tr><th style="text-align:left">Paràmetre</th><th>Valor</th><th style="text-align:left">Justificació</th></tr></thead>
+        <tbody>${D.hyp.map(r=>`<tr><td style="text-align:left"><span class="nm">${esc(r[0])}</span></td>
+          <td class="n">${isN(r[1])?(r[2]==='%'?pc(r[1],2):nf(r[1],0)+(r[2]==='anys'?' anys':'')):esc(r[1])}</td>
+          <td style="text-align:left;white-space:normal;font-size:12.5px;color:var(--ink2)">${esc(r[3]||'')}</td></tr>`).join('')}</tbody></table></div>
+    </section>
+    <section class="card">
+      <header><h3>El que el model no fa</h3><span class="eyebrow">Limitacions reconegudes</span></header>
+      <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px">
+        <div class="callout warnout"><b>El FCF és apalancat, no un FCFF canònic.</b> És el flux de caixa lliure després del servei del deute que publica la font de mercat, contrastat amb els comptes anuals. Com que el criteri és el mateix per a les set, la comparació es manté vàlida, però el DCF s’ha de llegir com una aproximació comparativa.</div>
+        <div class="callout warnout"><b>La taxa de descompte és comuna.</b> Un 8,5 % per a totes: no hi ha un WACC individual per empresa. És el que fa que la comparació sigui homogènia i, alhora, la simplificació més forta del model.</div>
+        <div class="callout warnout"><b>L’ajust financer no és un pont formal.</b> Com que el flux de partida ja incorpora el servei del deute, restar-ne després la posició financera neta funciona com una correcció comparativa, no com un pas net de valor d’empresa a valor de l’accionista.</div>
+        <div class="callout warnout"><b>La mitjana del grup és una referència, no un criteri.</b> Amb un PER mitjà de ${xx(D.grp['PER'].mitjana)} contra ${xx(D.grp['PER'].mediana)} de mediana, la fila «mitjana 7M» no intervé en cap decisió del treball.</div>
+      </div>
+      <p class="note">Aquestes advertències són les que el treball recull al capítol de limitacions. El panell les mostra aquí perquè cap xifra de dalt es llegeixi sense elles.</p>
+    </section>
+  </div>`;
+}
+
+/* ============ render i cablejat ============ */
+const R={resum:vResum, valoracio:vValoracio, qualitat:vQualitat, multiples:vMultiples, escenaris:vEscenaris, dades:vDades};
+
+function render(){
+  const v=VIEWS.find(x=>x.id===state.view);
+  document.getElementById('vkicker').textContent=v.ki;
+  document.getElementById('vtitle').textContent=v.t;
+  document.getElementById('vlede').textContent=v.lede;
+  document.getElementById('stag').innerHTML= base()
+    ? `<span class="basetag">●</span> escenari base del treball · r ${pc(H.r,2)} · g∞ ${pc(H.gp,2)}`
+    : `r <b>${pc(state.r,2)}</b> · g∞ <b>${pc(state.gp,2)}</b> · g ${state.gmode==='unif'?`<b>${pc(state.gu,1)}</b> uniforme`:'del model'} · DCF <b>${pc(state.w,0)}</b>`;
+  document.getElementById('view').innerHTML=R[state.view]();
+  document.querySelectorAll('#nav button').forEach(b=>b.setAttribute('aria-current', b.dataset.v===state.view?'true':'false'));
+  document.querySelectorAll('#chips .chip').forEach(b=>b.setAttribute('aria-pressed', b.dataset.co===state.sel?'true':'false'));
+}
+
+function build(){
+  document.getElementById('nav').innerHTML=VIEWS.map(v=>
+    `<button data-v="${v.id}" aria-current="false"><span class="k">${v.k}</span>${v.t}</button>`).join('');
+  document.getElementById('chips').innerHTML=CO.map(n=>
+    `<button class="chip" data-co="${esc(n)}" aria-pressed="false" title="${esc(n)}">${esc(D.comp[n].ticker)}</button>`).join('');
+  document.getElementById('nav').addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return; state.view=b.dataset.v; render();
+    document.querySelector('.main').scrollIntoView({block:'start',behavior:'smooth'});
+  });
+  document.getElementById('chips').addEventListener('click',e=>{
+    const b=e.target.closest('button'); if(!b)return; state.sel=b.dataset.co; render();
+  });
+  const sync=()=>{
+    document.getElementById('rv').textContent=pc(state.r,2);
+    document.getElementById('gpv').textContent=pc(state.gp,2);
+    document.getElementById('guv').textContent=pc(state.gu,2);
+    document.getElementById('wv').textContent=pc(state.w,0);
+    document.getElementById('guwrap').hidden = state.gmode!=='unif';
+    document.getElementById('gm-model').setAttribute('aria-pressed', state.gmode==='model');
+    document.getElementById('gm-unif').setAttribute('aria-pressed', state.gmode==='unif');
+    render();
+  };
+  const bind=(id,key,div)=>document.getElementById(id).addEventListener('input',e=>{state[key]=+e.target.value/div; sync();});
+  bind('r','r',100); bind('gp','gp',100); bind('gu','gu',100); bind('w','w',100);
+  document.getElementById('gm-model').addEventListener('click',()=>{state.gmode='model';sync();});
+  document.getElementById('gm-unif').addEventListener('click',()=>{state.gmode='unif';sync();});
+  document.getElementById('reset').addEventListener('click',()=>{
+    state.r=H.r; state.gp=H.gp; state.gmode='model'; state.gu=.06; state.w=H.w;
+    document.getElementById('r').value=8.5; document.getElementById('gp').value=2.5;
+    document.getElementById('gu').value=6; document.getElementById('w').value=50; sync();
+  });
+  document.getElementById('view').addEventListener('click',e=>{
+    const s=e.target.closest('[data-sort]');
+    if(s){ if(state.sortKey===s.dataset.sort) state.sortDir*=-1; else {state.sortKey=s.dataset.sort; state.sortDir=-1;} render(); return; }
+    const t=e.target.closest('[data-co]'); if(!t)return; state.sel=t.dataset.co; render();
+  });
+  const tt=document.getElementById('tt');
+  document.addEventListener('mousemove',e=>{
+    const t=e.target.closest?e.target.closest('[data-tt]'):null;
+    if(!t){tt.classList.remove('on');return;}
+    tt.textContent=t.getAttribute('data-tt'); tt.classList.add('on');
+    const pad=14, w=tt.offsetWidth, h=tt.offsetHeight;
+    tt.style.left=Math.min(e.clientX+pad, innerWidth-w-8)+'px';
+    tt.style.top=Math.max(8, e.clientY-h-pad)+'px';
+  });
+  sync();
+}
+build();
+</script>
+</body></html>
